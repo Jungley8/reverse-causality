@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://c51pro164ekg5"]
+
+[ext_resource type="Script" path="res://scripts/components/CauseCard.gd" id="1_w0q5s"]
+
+[node name="CauseCard" type="PanelContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(150, 100)
+script = ExtResource("1_w0q5s")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Label" type="Label" parent="MarginContainer"]
+layout_mode = 2
+text = "因果节点"
+autowrap_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1

@@ -1,0 +1,118 @@
+[gd_resource type="Resource" script_class="LevelData" format=3 uid="uid://cc0ueeq6wd6mc"]
+
+[ext_resource type="Script" uid="uid://cllxuyrjcre2s" path="res://scripts/data/CauseNode.gd" id="1_aib7a"]
+[ext_resource type="Script" uid="uid://djbi8obuus52g" path="res://scripts/data/CausalRule.gd" id="2_2lq7d"]
+[ext_resource type="Script" uid="uid://f65tdv7whv6p" path="res://scripts/data/LevelData.gd" id="3_fqbei"]
+
+[sub_resource type="Resource" id="Resource_6wkqx"]
+script = ExtResource("1_aib7a")
+id = "ai_ban"
+label = "2042年：某国全面禁止通用AI"
+tags = Array[String](["policy", "ai"])
+time_stage = 2
+
+[sub_resource type="Resource" id="Resource_xg06x"]
+script = ExtResource("1_aib7a")
+id = "ai_military_incident"
+label = "AI军事系统严重事故"
+tags = Array[String](["military", "ai"])
+time_stage = 0
+
+[sub_resource type="Resource" id="Resource_bsgu1"]
+script = ExtResource("1_aib7a")
+id = "public_fear"
+label = "公共恐慌扩大"
+tags = Array[String](["social"])
+
+[sub_resource type="Resource" id="Resource_ri5om"]
+script = ExtResource("1_aib7a")
+id = "political_opportunism"
+label = "政治力量借机表态"
+tags = Array[String](["politics"])
+
+[sub_resource type="Resource" id="Resource_pd480"]
+script = ExtResource("1_aib7a")
+id = "regulatory_capture"
+label = "监管被既得利益绑架"
+tags = Array[String](["policy"])
+
+[sub_resource type="Resource" id="Resource_cls38"]
+script = ExtResource("1_aib7a")
+id = "tech_backlash"
+label = "技术信任全面崩溃"
+tags = Array[String](["tech", "social"])
+
+[sub_resource type="Resource" id="Resource_c3pel"]
+script = ExtResource("1_aib7a")
+id = "foreign_competition"
+label = "他国AI领先"
+tags = Array[String](["politics", "tech"])
+time_stage = 0
+
+[sub_resource type="Resource" id="Resource_mpxrr"]
+script = ExtResource("1_aib7a")
+id = "ethics_report"
+label = "高风险伦理评估报告"
+tags = Array[String](["ethics"])
+time_stage = 0
+
+[sub_resource type="Resource" id="Resource_wl3ub"]
+script = ExtResource("1_aib7a")
+id = "social_media_spike"
+label = "社交媒体讨论激增"
+tags = Array[String](["social", "media"])
+
+[sub_resource type="Resource" id="Resource_cbk50"]
+script = ExtResource("2_2lq7d")
+from_id = "ai_military_incident"
+to_id = "public_fear"
+strength = 0.8
+
+[sub_resource type="Resource" id="Resource_tmxp7"]
+script = ExtResource("2_2lq7d")
+from_id = "public_fear"
+to_id = "tech_backlash"
+strength = 0.7
+
+[sub_resource type="Resource" id="Resource_6lfad"]
+script = ExtResource("2_2lq7d")
+from_id = "tech_backlash"
+to_id = "political_opportunism"
+strength = 0.6
+
+[sub_resource type="Resource" id="Resource_sor5y"]
+script = ExtResource("2_2lq7d")
+from_id = "political_opportunism"
+to_id = "ai_ban"
+strength = 0.8
+
+[sub_resource type="Resource" id="Resource_c7m3g"]
+script = ExtResource("2_2lq7d")
+from_id = "ethics_report"
+to_id = "public_fear"
+strength = 0.5
+
+[sub_resource type="Resource" id="Resource_0ofsp"]
+script = ExtResource("2_2lq7d")
+from_id = "foreign_competition"
+to_id = "regulatory_capture"
+strength = 0.4
+
+[sub_resource type="Resource" id="Resource_agkup"]
+script = ExtResource("2_2lq7d")
+from_id = "regulatory_capture"
+to_id = "ai_ban"
+strength = 0.6
+
+[sub_resource type="Resource" id="Resource_qgl00"]
+script = ExtResource("2_2lq7d")
+from_id = "social_media_spike"
+to_id = "public_fear"
+strength = 0.3
+
+[resource]
+script = ExtResource("3_fqbei")
+result_id = "ai_ban"
+required_strength = 3.0
+candidates = Array[ExtResource("1_aib7a")]([SubResource("Resource_6wkqx"), SubResource("Resource_xg06x"), SubResource("Resource_bsgu1"), SubResource("Resource_ri5om"), SubResource("Resource_pd480"), SubResource("Resource_cls38"), SubResource("Resource_c3pel"), SubResource("Resource_mpxrr"), SubResource("Resource_wl3ub")])
+rules = Array[ExtResource("2_2lq7d")]([SubResource("Resource_cbk50"), SubResource("Resource_tmxp7"), SubResource("Resource_6lfad"), SubResource("Resource_sor5y"), SubResource("Resource_c7m3g"), SubResource("Resource_0ofsp"), SubResource("Resource_agkup"), SubResource("Resource_qgl00")])

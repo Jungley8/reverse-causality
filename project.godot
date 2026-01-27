@@ -13,8 +13,17 @@ config_version=5
 config/name="Reverse Causality"
 config/description="逆果溯因"
 config/version="0.1"
+run/main_scene="uid://bxdc0v7vdckkj"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
+config/run/main_scene="res://scenes/ui/MainMenu.tscn"
+window/size/viewport_width=1280
+window/size/viewport_height=720
+
+[autoload]
+
+SaveGame="*res://scripts/core/SaveGame.gd"
+GameManager="*res://scripts/core/GameManager.gd"
 
 [physics]
 

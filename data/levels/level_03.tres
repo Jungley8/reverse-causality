@@ -1,0 +1,122 @@
+[gd_resource type="Resource" script_class="LevelData" format=3 uid="uid://pp8vtapqwugy"]
+
+[ext_resource type="Script" uid="uid://cllxuyrjcre2s" path="res://scripts/data/CauseNode.gd" id="1_6nawd"]
+[ext_resource type="Script" uid="uid://djbi8obuus52g" path="res://scripts/data/CausalRule.gd" id="2_7aiuv"]
+[ext_resource type="Script" uid="uid://f65tdv7whv6p" path="res://scripts/data/LevelData.gd" id="3_hij7b"]
+
+[sub_resource type="Resource" id="Resource_ilbil"]
+script = ExtResource("1_6nawd")
+id = "ai_legal_personhood"
+label = "2050年：AI被赋予有限法律人格"
+tags = Array[String](["legal", "ai"])
+time_stage = 2
+
+[sub_resource type="Resource" id="Resource_0bqj5"]
+script = ExtResource("1_6nawd")
+id = "autonomous_economy"
+label = "AI参与完整经济活动"
+tags = Array[String](["economy", "ai"])
+time_stage = 0
+
+[sub_resource type="Resource" id="Resource_ba1yj"]
+script = ExtResource("1_6nawd")
+id = "contract_dispute"
+label = "大规模AI合约纠纷"
+tags = Array[String](["legal", "economy"])
+
+[sub_resource type="Resource" id="Resource_etu6v"]
+script = ExtResource("1_6nawd")
+id = "accountability_gap"
+label = "责任无法明确归属"
+tags = Array[String](["legal"])
+
+[sub_resource type="Resource" id="Resource_a50vx"]
+script = ExtResource("1_6nawd")
+id = "legal_deadlock"
+label = "现行法律失效"
+tags = Array[String](["legal"])
+
+[sub_resource type="Resource" id="Resource_n7jmt"]
+script = ExtResource("1_6nawd")
+id = "judicial_pressure"
+label = "司法系统负担爆炸"
+tags = Array[String](["legal"])
+
+[sub_resource type="Resource" id="Resource_kt86t"]
+script = ExtResource("1_6nawd")
+id = "corporate_lobbying"
+label = "企业游说立法"
+tags = Array[String](["politics", "economy"])
+
+[sub_resource type="Resource" id="Resource_74b62"]
+script = ExtResource("1_6nawd")
+id = "public_acceptance"
+label = "社会心理逐步接受"
+tags = Array[String](["social"])
+
+[sub_resource type="Resource" id="Resource_l2ttr"]
+script = ExtResource("1_6nawd")
+id = "media_framing"
+label = "媒体叙事引导"
+tags = Array[String](["media", "social"])
+
+[sub_resource type="Resource" id="Resource_o4n63"]
+script = ExtResource("2_7aiuv")
+from_id = "autonomous_economy"
+to_id = "contract_dispute"
+strength = 0.7
+
+[sub_resource type="Resource" id="Resource_oc01v"]
+script = ExtResource("2_7aiuv")
+from_id = "contract_dispute"
+to_id = "accountability_gap"
+strength = 0.8
+
+[sub_resource type="Resource" id="Resource_gghgy"]
+script = ExtResource("2_7aiuv")
+from_id = "accountability_gap"
+to_id = "legal_deadlock"
+strength = 0.7
+
+[sub_resource type="Resource" id="Resource_adeyp"]
+script = ExtResource("2_7aiuv")
+from_id = "legal_deadlock"
+to_id = "ai_legal_personhood"
+strength = 0.9
+
+[sub_resource type="Resource" id="Resource_km01a"]
+script = ExtResource("2_7aiuv")
+from_id = "legal_deadlock"
+to_id = "judicial_pressure"
+strength = 0.6
+
+[sub_resource type="Resource" id="Resource_ukf6o"]
+script = ExtResource("2_7aiuv")
+from_id = "judicial_pressure"
+to_id = "corporate_lobbying"
+strength = 0.5
+
+[sub_resource type="Resource" id="Resource_gwv3r"]
+script = ExtResource("2_7aiuv")
+from_id = "corporate_lobbying"
+to_id = "ai_legal_personhood"
+strength = 0.6
+
+[sub_resource type="Resource" id="Resource_qbsrf"]
+script = ExtResource("2_7aiuv")
+from_id = "public_acceptance"
+to_id = "ai_legal_personhood"
+strength = 0.4
+
+[sub_resource type="Resource" id="Resource_kq1n8"]
+script = ExtResource("2_7aiuv")
+from_id = "media_framing"
+to_id = "public_acceptance"
+strength = 0.5
+
+[resource]
+script = ExtResource("3_hij7b")
+result_id = "ai_legal_personhood"
+required_strength = 3.2
+candidates = Array[ExtResource("1_6nawd")]([SubResource("Resource_ilbil"), SubResource("Resource_0bqj5"), SubResource("Resource_ba1yj"), SubResource("Resource_etu6v"), SubResource("Resource_a50vx"), SubResource("Resource_n7jmt"), SubResource("Resource_kt86t"), SubResource("Resource_74b62"), SubResource("Resource_l2ttr")])
+rules = Array[ExtResource("2_7aiuv")]([SubResource("Resource_o4n63"), SubResource("Resource_oc01v"), SubResource("Resource_gghgy"), SubResource("Resource_adeyp"), SubResource("Resource_km01a"), SubResource("Resource_ukf6o"), SubResource("Resource_gwv3r"), SubResource("Resource_qbsrf"), SubResource("Resource_kq1n8")])

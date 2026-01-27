@@ -1,0 +1,52 @@
+[gd_scene format=3 uid="uid://dnuuym2q0nl6w"]
+
+[ext_resource type="Script" uid="uid://cdpaefm3offbr" path="res://scripts/ui/ResultPanel.gd" id="1_8p5o2"]
+
+[node name="Root" type="Control" unique_id=1110254083]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ResultPanel" type="Panel" parent="." unique_id=1059048824]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_8p5o2")
+
+[node name="VBox" type="VBoxContainer" parent="ResultPanel" unique_id=835584557]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="GradeLabel" type="Label" parent="ResultPanel/VBox" unique_id=337068628]
+layout_mode = 2
+
+[node name="CompletenessBar" type="ProgressBar" parent="ResultPanel/VBox" unique_id=1515760706]
+layout_mode = 2
+
+[node name="StrengthBar" type="ProgressBar" parent="ResultPanel/VBox" unique_id=123274643]
+layout_mode = 2
+
+[node name="CleanlinessBar" type="ProgressBar" parent="ResultPanel/VBox" unique_id=735893524]
+layout_mode = 2
+
+[node name="CommentLabel" type="Label" parent="ResultPanel/VBox" unique_id=1135676558]
+layout_mode = 2
+
+[node name="UnlockLabel" type="Label" parent="ResultPanel/VBox" unique_id=1569018122]
+layout_mode = 2
+
+[node name="Buttons" type="HBoxContainer" parent="ResultPanel/VBox" unique_id=1716683023]
+layout_mode = 2
+
+[node name="NextButton" type="Button" parent="ResultPanel/VBox/Buttons" unique_id=1807278537]
+layout_mode = 2
+text = "下一关"
+
+[node name="RetryButton" type="Button" parent="ResultPanel/VBox/Buttons" unique_id=1753342064]
+layout_mode = 2
+text = "重新挑战"

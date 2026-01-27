@@ -1,0 +1,129 @@
+[gd_resource type="Resource" script_class="LevelData" format=3 uid="uid://ddcd8vm33xlya"]
+
+[ext_resource type="Script" uid="uid://cllxuyrjcre2s" path="res://scripts/data/CauseNode.gd" id="1_55y67"]
+[ext_resource type="Script" uid="uid://djbi8obuus52g" path="res://scripts/data/CausalRule.gd" id="2_6jrhh"]
+[ext_resource type="Script" uid="uid://f65tdv7whv6p" path="res://scripts/data/LevelData.gd" id="3_edcfl"]
+
+[sub_resource type="Resource" id="Resource_vjtlv"]
+script = ExtResource("1_55y67")
+id = "city_system_collapse"
+label = "2038年：某大型城市发生系统性崩溃"
+tags = Array[String](["crisis", "system"])
+time_stage = 2
+
+[sub_resource type="Resource" id="Resource_y1woe"]
+script = ExtResource("1_55y67")
+id = "tech_breakthrough"
+label = "通用自动化技术突然成熟"
+tags = Array[String](["tech"])
+time_stage = 0
+
+[sub_resource type="Resource" id="Resource_qg5lk"]
+script = ExtResource("1_55y67")
+id = "job_displacement"
+label = "大规模结构性失业"
+tags = Array[String](["economy", "social"])
+
+[sub_resource type="Resource" id="Resource_bcktr"]
+script = ExtResource("1_55y67")
+id = "welfare_lag"
+label = "社会保障体系响应滞后"
+tags = Array[String](["policy"])
+
+[sub_resource type="Resource" id="Resource_6r1wk"]
+script = ExtResource("1_55y67")
+id = "social_unrest"
+label = "社会情绪持续恶化"
+tags = Array[String](["social"])
+
+[sub_resource type="Resource" id="Resource_8rkjy"]
+script = ExtResource("1_55y67")
+id = "infra_overload"
+label = "城市基础设施长期超负荷"
+tags = Array[String](["infrastructure"])
+
+[sub_resource type="Resource" id="Resource_c0wg5"]
+script = ExtResource("1_55y67")
+id = "capital_flight"
+label = "资本外流"
+tags = Array[String](["economy"])
+
+[sub_resource type="Resource" id="Resource_a27lr"]
+script = ExtResource("1_55y67")
+id = "climate_event"
+label = "极端气候事件"
+tags = Array[String](["environment"])
+time_stage = 0
+
+[sub_resource type="Resource" id="Resource_0duyb"]
+script = ExtResource("1_55y67")
+id = "misinformation"
+label = "信息系统被大量噪声污染"
+tags = Array[String](["information"])
+
+[sub_resource type="Resource" id="Resource_0crcv"]
+script = ExtResource("2_6jrhh")
+from_id = "tech_breakthrough"
+to_id = "job_displacement"
+strength = 0.7
+
+[sub_resource type="Resource" id="Resource_cr4qp"]
+script = ExtResource("2_6jrhh")
+from_id = "job_displacement"
+to_id = "social_unrest"
+strength = 0.6
+
+[sub_resource type="Resource" id="Resource_wjnqv"]
+script = ExtResource("2_6jrhh")
+from_id = "social_unrest"
+to_id = "city_system_collapse"
+strength = 0.8
+
+[sub_resource type="Resource" id="Resource_yk1dp"]
+script = ExtResource("2_6jrhh")
+from_id = "welfare_lag"
+to_id = "social_unrest"
+strength = 0.5
+
+[sub_resource type="Resource" id="Resource_ed6kk"]
+script = ExtResource("2_6jrhh")
+from_id = "infra_overload"
+to_id = "city_system_collapse"
+strength = 0.7
+
+[sub_resource type="Resource" id="Resource_njawt"]
+script = ExtResource("2_6jrhh")
+from_id = "climate_event"
+to_id = "infra_overload"
+strength = 0.6
+
+[sub_resource type="Resource" id="Resource_lriho"]
+script = ExtResource("2_6jrhh")
+from_id = "misinformation"
+to_id = "social_unrest"
+strength = 0.3
+
+[sub_resource type="Resource" id="Resource_4dtr7"]
+script = ExtResource("2_6jrhh")
+from_id = "capital_flight"
+to_id = "city_system_collapse"
+strength = 0.4
+
+[sub_resource type="Resource" id="Resource_l6nkq"]
+script = ExtResource("2_6jrhh")
+from_id = "job_displacement"
+to_id = "welfare_lag"
+strength = 0.5
+
+[sub_resource type="Resource" id="Resource_n26oj"]
+script = ExtResource("2_6jrhh")
+from_id = "tech_breakthrough"
+to_id = "infra_overload"
+strength = 0.4
+
+[resource]
+script = ExtResource("3_edcfl")
+result_id = "city_system_collapse"
+required_strength = 2.8
+candidates = Array[ExtResource("1_55y67")]([SubResource("Resource_vjtlv"), SubResource("Resource_y1woe"), SubResource("Resource_qg5lk"), SubResource("Resource_bcktr"), SubResource("Resource_6r1wk"), SubResource("Resource_8rkjy"), SubResource("Resource_c0wg5"), SubResource("Resource_a27lr"), SubResource("Resource_0duyb")])
+rules = Array[ExtResource("2_6jrhh")]([SubResource("Resource_0crcv"), SubResource("Resource_cr4qp"), SubResource("Resource_wjnqv"), SubResource("Resource_yk1dp"), SubResource("Resource_ed6kk"), SubResource("Resource_njawt"), SubResource("Resource_lriho"), SubResource("Resource_4dtr7"), SubResource("Resource_l6nkq"), SubResource("Resource_n26oj")])
