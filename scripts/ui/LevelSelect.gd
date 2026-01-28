@@ -19,7 +19,8 @@ func _ready():
 	
 	_load_level_states()
 	if back_button:
-		back_button.pressed.connect(_on_back_pressed)
+		if not back_button.pressed.is_connected(_on_back_pressed):
+			back_button.pressed.connect(_on_back_pressed)
 
 func _load_previous_unlock_states():
 	# 从SaveGame读取之前的解锁状态

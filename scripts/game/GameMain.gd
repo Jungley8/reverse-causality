@@ -6,7 +6,6 @@ extends Control
 var current_level: LevelData
 var current_dragging_card: CauseCard = null
 var chain_slots: Array[ChainSlot] = []
-var undo_redo_manager: UndoRedoManager  # 使用全局autoload实例
 var is_undoing_redoing: bool = false  # 标记是否正在执行撤销/重做，避免重复记录
 
 @onready var level_label = $Header/LevelLabel
@@ -22,12 +21,8 @@ var is_undoing_redoing: bool = false  # 标记是否正在执行撤销/重做，
 @onready var error_toast = $ErrorToast
 
 func _ready():
-	# 创建撤销/重做管理器实例
-	undo_redo_manager = UndoRedoManager.new()
-	add_child(undo_redo_manager)
-	
 	# 清空历史记录（新关卡开始）
-	undo_redo_manager.clear()
+	UndoRedoManager.clear()
 	
 	# 从 GameManager 获取当前关卡
 	if GameManager.current_level:
@@ -168,7 +163,7 @@ func _on_card_placed(slot: ChainSlot, card: CauseCard):
 	if not is_undoing_redoing:
 		var slot_index = chain_slots.find(slot)
 		if slot_index >= 0 and card and card.cause_data:
-			undo_redo_manager.record_place(slot_index, card.cause_data.id)
+			UndoRedoManager.record_place(slot_index, card.cause_data.id)
 	
 	_update_strength_bar()
 
@@ -177,7 +172,7 @@ func _on_card_removed(slot: ChainSlot, card_id: String):
 	if not is_undoing_redoing and card_id:
 		var slot_index = chain_slots.find(slot)
 		if slot_index >= 0:
-			undo_redo_manager.record_remove(slot_index, card_id)
+			UndoRedoManager.record_remove(slot_index, card_id)
 	
 	_update_strength_bar()
 
@@ -335,7 +330,7 @@ func _on_result_retry():
 func _on_clear_pressed():
 	for slot in chain_slots:
 		slot.remove_card()
-	undo_redo_manager.clear()  # 清空撤销/重做历史
+	UndoRedoManager.clear()  # 清空撤销/重做历史
 	_update_strength_bar()
 
 func _show_error(message: String):
@@ -354,11 +349,11 @@ func _input(event: InputEvent):
 			get_viewport().set_input_as_handled()
 
 func _undo():
-	if not undo_redo_manager.can_undo():
+	if not UndoRedoManager.can_undo():
 		return
 	
 	is_undoing_redoing = true
-	var action = undo_redo_manager.undo()
+	var action = UndoRedoManager.undo()
 	if not action:
 		is_undoing_redoing = false
 		return
@@ -383,11 +378,11 @@ func _undo():
 	_update_strength_bar()
 
 func _redo():
-	if not undo_redo_manager.can_redo():
+	if not UndoRedoManager.can_redo():
 		return
 	
 	is_undoing_redoing = true
-	var action = undo_redo_manager.redo()
+	var action = UndoRedoManager.redo()
 	if not action:
 		is_undoing_redoing = false
 		return

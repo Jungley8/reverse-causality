@@ -1,4 +1,3 @@
-class_name UndoRedoManager
 extends Node
 
 ## 撤销/重做管理器
