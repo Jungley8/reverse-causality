@@ -9,3 +9,4 @@ extends Resource
 @export var max_steps: int = 6
 @export var candidates: Array[CauseNode] = []
 @export var rules: Array[CausalRule] = []
+@export var valid_paths: Array[Dictionary] = []  # [{ name: String, path: Array[String], difficulty: int, bonus_multiplier: float }]

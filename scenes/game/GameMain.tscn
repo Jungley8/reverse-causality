@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/game/GameMain.gd" id="1_jo4p4"]
 [ext_resource type="Script" path="res://scripts/ui/ResultPanel.gd" id="2_result"]
+[ext_resource type="PackedScene" uid="uid://error_toast_001" path="res://scenes/ui/ErrorToast.tscn" id="3_toast"]
 
 [node name="GameMain" type="Control"]
 layout_mode = 3
@@ -235,3 +236,21 @@ text = "下一关"
 [node name="RetryButton" type="Button" parent="ResultPanel/VBox/Buttons"]
 layout_mode = 2
 text = "重新挑战"
+
+[node name="ShareButton" type="Button" parent="ResultPanel/VBox/Buttons"]
+layout_mode = 2
+text = "分享"
+
+[node name="ErrorToast" parent="." instance=ExtResource("3_toast")]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 0.5
+anchor_top = 0.0
+anchor_right = 0.5
+anchor_bottom = 0.0
+offset_left = -300.0
+offset_top = 20.0
+offset_right = 300.0
+offset_bottom = 80.0
+grow_horizontal = 2
+grow_vertical = 0

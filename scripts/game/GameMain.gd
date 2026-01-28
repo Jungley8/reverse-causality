@@ -6,6 +6,8 @@ extends Control
 var current_level: LevelData
 var current_dragging_card: CauseCard = null
 var chain_slots: Array[ChainSlot] = []
+var undo_redo_manager: UndoRedoManager  # 使用全局autoload实例
+var is_undoing_redoing: bool = false  # 标记是否正在执行撤销/重做，避免重复记录
 
 @onready var level_label = $Header/LevelLabel
 @onready var result_card = $ResultCardContainer/ResultCard
@@ -17,8 +19,16 @@ var chain_slots: Array[ChainSlot] = []
 @onready var validate_button = $ActionButtons/ValidateButton
 @onready var clear_button = $ActionButtons/ClearButton
 @onready var result_panel = $ResultPanel
+@onready var error_toast = $ErrorToast
 
 func _ready():
+	# 创建撤销/重做管理器实例
+	undo_redo_manager = UndoRedoManager.new()
+	add_child(undo_redo_manager)
+	
+	# 清空历史记录（新关卡开始）
+	undo_redo_manager.clear()
+	
 	# 从 GameManager 获取当前关卡
 	if GameManager.current_level:
 		current_level = GameManager.current_level
@@ -130,6 +140,11 @@ func _on_card_drag_started(card: CauseCard):
 func _on_card_drag_ended(card: CauseCard):
 	current_dragging_card = null
 	_clear_slot_hints()
+	
+	# 如果卡片没有被使用（放置失败），返回原位置
+	if card and not card.is_used:
+		card.return_to_original()
+	
 	_update_strength_bar()
 
 func _update_slot_hints(card: CauseCard):
@@ -149,9 +164,21 @@ func _clear_slot_hints():
 		slot._update_visual()
 
 func _on_card_placed(slot: ChainSlot, card: CauseCard):
+	# 记录操作到撤销/重做管理器（如果不是在执行撤销/重做）
+	if not is_undoing_redoing:
+		var slot_index = chain_slots.find(slot)
+		if slot_index >= 0 and card and card.cause_data:
+			undo_redo_manager.record_place(slot_index, card.cause_data.id)
+	
 	_update_strength_bar()
 
-func _on_card_removed(slot: ChainSlot):
+func _on_card_removed(slot: ChainSlot, card_id: String):
+	# 记录操作到撤销/重做管理器（如果不是在执行撤销/重做）
+	if not is_undoing_redoing and card_id:
+		var slot_index = chain_slots.find(slot)
+		if slot_index >= 0:
+			undo_redo_manager.record_remove(slot_index, card_id)
+	
 	_update_strength_bar()
 
 func _get_current_chain() -> Array[String]:
@@ -187,8 +214,25 @@ func _update_strength_bar():
 	
 	if current_level:
 		var ratio = (strength / current_level.required_strength) * 100.0
-		strength_bar.value = clamp(ratio, 0.0, 100.0)
+		var target_value = clamp(ratio, 0.0, 100.0)
+		
+		# 使用Tween平滑过渡
+		var tween = create_tween()
+		tween.tween_property(strength_bar, "value", target_value, 0.3).set_ease(Tween.EASE_OUT)
+		
+		# 更新标签
 		strength_label.text = "%.1f / %.1f" % [strength, current_level.required_strength]
+		
+		# 根据强度设置颜色反馈
+		var color: Color
+		if ratio >= 90.0:
+			color = Color(0.2, 1.0, 0.2)  # 绿色（接近阈值）
+		elif ratio >= 70.0:
+			color = Color(1.0, 1.0, 0.2)  # 黄色
+		else:
+			color = Color(1.0, 0.4, 0.4)  # 红色（不足）
+		
+		tween.parallel().tween_property(strength_bar, "modulate", color, 0.3)
 	else:
 		strength_bar.value = 0.0
 		strength_label.text = "0.0 / 0.0"
@@ -200,14 +244,64 @@ func _on_validate_pressed():
 		_show_error("请至少放置 2 个因果节点")
 		return
 	
+	# 播放验证音效
+	if AudioManager:
+		AudioManager.play_validate()
+	
 	var validator = CausalValidator.new()
 	var result = validator.validate_chain(chain, current_level)
 	# 添加 required_strength 到结果中，供评分使用
 	result["required_strength"] = current_level.required_strength
+	
+	# 检测共振
+	var resonances = ResonanceDetector.detect_resonances(chain)
+	result["resonances"] = resonances
+	
+	# 检测路径
+	var path_info = PathAnalyzer.detect_path(chain, current_level)
+	result["path_info"] = path_info
+	
+	# 应用加成（先路径，后共振）
+	var base_strength = result.get("strength", 0.0)
+	if path_info.get("matched", false):
+		base_strength = PathAnalyzer.apply_path_bonus(base_strength, path_info)
+		# 播放路径发现音效
+		if path_info.get("is_new", false) and AudioManager:
+			AudioManager.play_success()
+	
+	if not resonances.is_empty():
+		result["strength"] = ResonanceDetector.apply_resonance_bonus(base_strength, resonances)
+		# 播放共振解锁音效
+		for resonance in resonances:
+			if resonance.get("is_new", false) and AudioManager:
+				AudioManager.play_success()  # 使用成功音效，后续可以添加专门的共振音效
+	else:
+		result["strength"] = base_strength
+	
 	var grade = validator.calculate_grade(chain, result)
 	
-	# 保存结果
+	# 如果有错误，显示错误消息
+	if not result.passed and result.has("errors") and not result.errors.is_empty():
+		var error_msg = result.errors[0]  # 显示第一个错误
+		if result.errors.size() > 1:
+			error_msg += "（还有 %d 个问题）" % (result.errors.size() - 1)
+		_show_error(error_msg)
+		# 播放失败音效
+		if AudioManager:
+			AudioManager.play_fail()
+	else:
+		# 播放成功音效
+		if AudioManager:
+			AudioManager.play_success()
+	
+	# 保存结果（添加chain到result中供分享使用）
+	result["chain"] = chain
 	SaveGame.save_level_result(GameManager.current_level_id, grade, result.strength, chain)
+	
+	# 生成并保存世界线日志（仅在通过时）
+	if result.passed and grade != "FAIL":
+		var log_text = WorldLogGenerator.generate_world_log(chain, current_level, result)
+		WorldLogGenerator.save_world_log(GameManager.current_level_id, chain, log_text)
 	
 	# 显示结果面板
 	result_panel.show_result(result, grade)
@@ -241,8 +335,85 @@ func _on_result_retry():
 func _on_clear_pressed():
 	for slot in chain_slots:
 		slot.remove_card()
+	undo_redo_manager.clear()  # 清空撤销/重做历史
 	_update_strength_bar()
 
 func _show_error(message: String):
 	print("错误：", message)
-	# 可以添加错误提示UI
+	if error_toast:
+		error_toast.show_error(message)
+
+func _input(event: InputEvent):
+	# 处理撤销/重做快捷键
+	if event is InputEventKey and event.pressed:
+		if event.keycode == KEY_Z and (event.ctrl_pressed or event.meta_pressed):
+			_undo()
+			get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_Y and (event.ctrl_pressed or event.meta_pressed):
+			_redo()
+			get_viewport().set_input_as_handled()
+
+func _undo():
+	if not undo_redo_manager.can_undo():
+		return
+	
+	is_undoing_redoing = true
+	var action = undo_redo_manager.undo()
+	if not action:
+		is_undoing_redoing = false
+		return
+	
+	match action.action_type:
+		UndoRedoManager.ActionType.PLACE:
+			# 撤销放置：移除卡片
+			if action.slot_index < chain_slots.size():
+				var slot = chain_slots[action.slot_index]
+				if slot.current_card:
+					slot.remove_card()
+		UndoRedoManager.ActionType.REMOVE:
+			# 撤销移除：恢复卡片
+			if action.slot_index < chain_slots.size():
+				var slot = chain_slots[action.slot_index]
+				# 查找对应的卡片
+				var card = _find_card_by_id(action.card_id)
+				if card and not card.is_used:
+					slot.place_card(card)
+	
+	is_undoing_redoing = false
+	_update_strength_bar()
+
+func _redo():
+	if not undo_redo_manager.can_redo():
+		return
+	
+	is_undoing_redoing = true
+	var action = undo_redo_manager.redo()
+	if not action:
+		is_undoing_redoing = false
+		return
+	
+	match action.action_type:
+		UndoRedoManager.ActionType.PLACE:
+			# 重做放置：恢复卡片
+			if action.slot_index < chain_slots.size():
+				var slot = chain_slots[action.slot_index]
+				var card = _find_card_by_id(action.card_id)
+				if card and not card.is_used:
+					slot.place_card(card)
+		UndoRedoManager.ActionType.REMOVE:
+			# 重做移除：移除卡片
+			if action.slot_index < chain_slots.size():
+				var slot = chain_slots[action.slot_index]
+				if slot.current_card:
+					slot.remove_card()
+	
+	is_undoing_redoing = false
+	_update_strength_bar()
+
+func _find_card_by_id(card_id: String) -> CauseCard:
+	for child in candidate_grid.get_children():
+		if child is CauseCard:
+			var card = child as CauseCard
+			if card.cause_data and card.cause_data.id == card_id:
+				return card
+	return null

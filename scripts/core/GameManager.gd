@@ -15,3 +15,12 @@ func load_level(level_id: int):
 	else:
 		push_error("关卡文件不存在：", level_path)
 		return null
+
+func load_level_from_path(level_path: String):
+	current_level_id = 101  # 隐藏关卡使用101
+	if ResourceLoader.exists(level_path):
+		current_level = load(level_path) as LevelData
+		return current_level
+	else:
+		push_error("关卡文件不存在：", level_path)
+		return null

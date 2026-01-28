@@ -24,6 +24,17 @@ window/size/viewport_height=720
 
 SaveGame="*res://scripts/core/SaveGame.gd"
 GameManager="*res://scripts/core/GameManager.gd"
+AudioManager="*res://scripts/core/AudioManager.gd"
+ResponsiveUI="*res://scripts/core/ResponsiveUI.gd"
+UndoRedoManager="*res://scripts/core/UndoRedoManager.gd"
+
+[editor_plugins]
+
+enabled=PackedStringArray()
+
+[gui]
+
+theme/custom_font="uid://c5ghlvuubqsfv"
 
 [physics]
 

@@ -1,0 +1,60 @@
+[gd_scene format=3 uid="uid://archive_ui_001"]
+
+[ext_resource type="Script" path="res://scripts/ui/Archive.gd" id="1_archive"]
+
+[node name="Archive" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_archive")
+
+[node name="Header" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 0.5
+anchor_top = 0.0
+anchor_right = 0.5
+anchor_bottom = 0.0
+offset_left = -200.0
+offset_top = 10.0
+offset_right = 200.0
+offset_bottom = 50.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="BackButton" type="Button" parent="Header"]
+layout_mode = 2
+text = "← 返回"
+
+[node name="TitleLabel" type="Label" parent="Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+text = "因果图鉴"
+horizontal_alignment = 1
+
+[node name="TabContainer" type="TabContainer" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 0.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -500.0
+offset_top = 60.0
+offset_right = 500.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Levels" type="Control" parent="TabContainer"]
+layout_mode = 2
+
+[node name="Resonances" type="Control" parent="TabContainer"]
+layout_mode = 2
+
+[node name="WorldLogs" type="Control" parent="TabContainer"]
+layout_mode = 2

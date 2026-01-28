@@ -20,5 +20,4 @@ func _on_continue_pressed():
 	get_tree().change_scene_to_file("res://scenes/ui/LevelSelect.tscn")
 
 func _on_archive_pressed():
-	# 暂时跳转到关卡选择（因果图鉴功能在P2实现）
-	get_tree().change_scene_to_file("res://scenes/ui/LevelSelect.tscn")
+	get_tree().change_scene_to_file("res://scenes/ui/Archive.tscn")

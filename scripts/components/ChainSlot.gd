@@ -5,7 +5,7 @@ extends PanelContainer
 ## 用于放置因果节点卡片的槽位
 
 signal card_placed(slot: ChainSlot, card: CauseCard)
-signal card_removed(slot: ChainSlot)
+signal card_removed(slot: ChainSlot, card_id: String)  # 添加card_id参数
 
 enum State {
 	EMPTY,
@@ -59,7 +59,14 @@ func can_accept_card(card: CauseCard) -> bool:
 ## 放置卡片
 func place_card(card: CauseCard):
 	if not can_accept_card(card):
+		# 播放放置失败音效
+		if AudioManager:
+			AudioManager.play_place_fail()
 		return
+	
+	# 播放放置成功音效
+	if AudioManager:
+		AudioManager.play_place()
 	
 	# 如果槽位已有卡片，先移除
 	if current_card:
@@ -76,19 +83,30 @@ func place_card(card: CauseCard):
 	card_clone.mouse_filter = MOUSE_FILTER_IGNORE
 	card_container.add_child(card_clone)
 	
-	# 设置卡片位置和大小
-	card_clone.position = Vector2.ZERO
-	card_clone.size = size
+	# 设置卡片初始位置（从原卡片位置开始）
+	var card_global_pos = card.global_position
+	var slot_global_pos = global_position
+	card_clone.position = card_global_pos - slot_global_pos
+	card_clone.size = card.size
 	
-	# 标记原卡片为已使用
+	# 标记原卡片为已使用（隐藏原卡片）
 	card.set_used(true)
+	
+	# 放置动画：平滑移动到槽位中心并调整大小
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(card_clone, "position", Vector2.ZERO, 0.3).set_ease(Tween.EASE_OUT)
+	tween.tween_property(card_clone, "size", size, 0.3).set_ease(Tween.EASE_OUT)
 	
 	_update_visual()
 	card_placed.emit(self, card)
 
 ## 移除卡片
 func remove_card():
-	if current_card:
+	# 保存card_id，因为emit信号时需要
+	var card_id = ""
+	if current_card and current_card.cause_data:
+		card_id = current_card.cause_data.id
 		current_card.set_used(false)
 		current_card = null
 	
@@ -99,7 +117,7 @@ func remove_card():
 		child.queue_free()
 	
 	_update_visual()
-	card_removed.emit(self)
+	card_removed.emit(self, card_id)
 
 ## 拖拽检测
 func _can_drop_data(_at_position: Vector2, data) -> bool:

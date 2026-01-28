@@ -17,8 +17,22 @@ var original_position: Vector2
 func _ready():
 	if cause_data:
 		label.text = cause_data.label
+		_update_visual()
 	mouse_entered.connect(_on_mouse_entered)
 	mouse_exited.connect(_on_mouse_exited)
+
+func _update_visual():
+	if not cause_data:
+		return
+	
+	# 如果是干扰节点，使用偏红的背景色
+	if cause_data.is_distractor:
+		var style = StyleBoxFlat.new()
+		style.bg_color = Color(0.4, 0.2, 0.2)  # 偏红色背景
+		add_theme_stylebox_override("panel", style)
+	else:
+		# 正常节点使用默认样式
+		remove_theme_stylebox_override("panel")
 
 func _on_mouse_entered():
 	if not is_used and not is_dragging:
@@ -37,7 +51,16 @@ func _get_drag_data(_at_position: Vector2):
 	
 	is_dragging = true
 	original_position = global_position
-	modulate.a = 0.7
+	
+	# 播放拖拽音效
+	if AudioManager:
+		AudioManager.play_drag()
+	
+	# 拖拽动画：轻微放大 + 半透明
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(self, "scale", Vector2(1.05, 1.05), 0.1)
+	tween.tween_property(self, "modulate:a", 0.7, 0.1)
 	
 	drag_started.emit(self)
 	
@@ -53,7 +76,11 @@ func _notification(what):
 	if what == NOTIFICATION_DRAG_END:
 		if is_dragging:
 			is_dragging = false
-			modulate.a = 1.0
+			# 恢复动画
+			var tween = create_tween()
+			tween.set_parallel(true)
+			tween.tween_property(self, "scale", Vector2.ONE, 0.1)
+			tween.tween_property(self, "modulate:a", 1.0, 0.1)
 			drag_ended.emit(self)
 
 ## 设置已使用状态
@@ -66,8 +93,10 @@ func set_used(used: bool):
 		modulate = Color.WHITE
 		mouse_filter = MOUSE_FILTER_STOP
 
-## 返回原始位置
+## 返回原始位置（放置失败时调用）
 func return_to_original():
-	global_position = original_position
 	var tween = create_tween()
-	tween.tween_property(self, "scale", Vector2.ONE, 0.2)
+	tween.set_parallel(true)
+	tween.tween_property(self, "global_position", original_position, 0.3).set_ease(Tween.EASE_OUT)
+	tween.tween_property(self, "scale", Vector2.ONE, 0.3)
+	tween.tween_property(self, "modulate:a", 1.0, 0.3)

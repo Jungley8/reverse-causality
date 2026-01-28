@@ -1,0 +1,195 @@
+[gd_resource type="Resource" script_class="LevelData" format=3 uid="uid://hidden_level_001"]
+
+[ext_resource type="Script" uid="uid://cllxuyrjcre2s" path="res://scripts/data/CauseNode.gd" id="1_hidden"]
+[ext_resource type="Script" uid="uid://djbi8obuus52g" path="res://scripts/data/CausalRule.gd" id="2_hidden"]
+[ext_resource type="Script" uid="uid://f65tdv7whv6p" path="res://scripts/data/LevelData.gd" id="3_hidden"]
+
+[sub_resource type="Resource" id="Resource_result"]
+script = ExtResource("1_hidden")
+id = "system_collapse"
+label = "2060年：全球系统级崩溃"
+tags = Array[String](["crisis", "system", "global"])
+time_stage = 2
+
+[sub_resource type="Resource" id="Resource_cause1"]
+script = ExtResource("1_hidden")
+id = "tech_breakthrough"
+label = "通用自动化技术突然成熟"
+tags = Array[String](["tech"])
+time_stage = 0
+
+[sub_resource type="Resource" id="Resource_cause2"]
+script = ExtResource("1_hidden")
+id = "job_displacement"
+label = "大规模结构性失业"
+tags = Array[String](["economy", "social"])
+time_stage = 1
+
+[sub_resource type="Resource" id="Resource_cause3"]
+script = ExtResource("1_hidden")
+id = "social_unrest"
+label = "社会情绪持续恶化"
+tags = Array[String](["social"])
+time_stage = 1
+
+[sub_resource type="Resource" id="Resource_cause4"]
+script = ExtResource("1_hidden")
+id = "climate_event"
+label = "极端气候事件"
+tags = Array[String](["environment"])
+time_stage = 0
+
+[sub_resource type="Resource" id="Resource_cause5"]
+script = ExtResource("1_hidden")
+id = "infra_overload"
+label = "城市基础设施长期超负荷"
+tags = Array[String](["infrastructure"])
+time_stage = 1
+
+[sub_resource type="Resource" id="Resource_cause6"]
+script = ExtResource("1_hidden")
+id = "misinformation"
+label = "信息系统被大量噪声污染"
+tags = Array[String](["information"])
+time_stage = 0
+
+[sub_resource type="Resource" id="Resource_cause7"]
+script = ExtResource("1_hidden")
+id = "public_fear"
+label = "公众恐慌情绪蔓延"
+tags = Array[String](["social"])
+time_stage = 1
+
+[sub_resource type="Resource" id="Resource_cause8"]
+script = ExtResource("1_hidden")
+id = "policy_shift"
+label = "政策急剧转向"
+tags = Array[String](["policy"])
+time_stage = 1
+
+[sub_resource type="Resource" id="Resource_cause9"]
+script = ExtResource("1_hidden")
+id = "resource_scarcity"
+label = "关键资源稀缺"
+tags = Array[String](["economy", "environment"])
+time_stage = 0
+
+[sub_resource type="Resource" id="Resource_cause10"]
+script = ExtResource("1_hidden")
+id = "competition"
+label = "竞争加剧"
+tags = Array[String](["economy", "social"])
+time_stage = 1
+
+[sub_resource type="Resource" id="Resource_cause11"]
+script = ExtResource("1_hidden")
+id = "conflict_escalation"
+label = "冲突升级"
+tags = Array[String](["social", "crisis"])
+time_stage = 2
+
+[sub_resource type="Resource" id="Resource_rule1"]
+script = ExtResource("2_hidden")
+from_id = "tech_breakthrough"
+to_id = "job_displacement"
+strength = 0.7
+
+[sub_resource type="Resource" id="Resource_rule2"]
+script = ExtResource("2_hidden")
+from_id = "job_displacement"
+to_id = "social_unrest"
+strength = 0.6
+
+[sub_resource type="Resource" id="Resource_rule3"]
+script = ExtResource("2_hidden")
+from_id = "social_unrest"
+to_id = "system_collapse"
+strength = 0.8
+
+[sub_resource type="Resource" id="Resource_rule4"]
+script = ExtResource("2_hidden")
+from_id = "climate_event"
+to_id = "infra_overload"
+strength = 0.6
+
+[sub_resource type="Resource" id="Resource_rule5"]
+script = ExtResource("2_hidden")
+from_id = "infra_overload"
+to_id = "system_collapse"
+strength = 0.7
+
+[sub_resource type="Resource" id="Resource_rule6"]
+script = ExtResource("2_hidden")
+from_id = "misinformation"
+to_id = "public_fear"
+strength = 0.5
+
+[sub_resource type="Resource" id="Resource_rule7"]
+script = ExtResource("2_hidden")
+from_id = "public_fear"
+to_id = "policy_shift"
+strength = 0.6
+
+[sub_resource type="Resource" id="Resource_rule8"]
+script = ExtResource("2_hidden")
+from_id = "policy_shift"
+to_id = "system_collapse"
+strength = 0.5
+
+[sub_resource type="Resource" id="Resource_rule9"]
+script = ExtResource("2_hidden")
+from_id = "resource_scarcity"
+to_id = "competition"
+strength = 0.6
+
+[sub_resource type="Resource" id="Resource_rule10"]
+script = ExtResource("2_hidden")
+from_id = "competition"
+to_id = "conflict_escalation"
+strength = 0.7
+
+[sub_resource type="Resource" id="Resource_rule11"]
+script = ExtResource("2_hidden")
+from_id = "conflict_escalation"
+to_id = "system_collapse"
+strength = 0.8
+
+[sub_resource type="Resource" id="Resource_rule12"]
+script = ExtResource("2_hidden")
+from_id = "climate_event"
+to_id = "resource_scarcity"
+strength = 0.5
+
+[sub_resource type="Resource" id="Resource_rule13"]
+script = ExtResource("2_hidden")
+from_id = "tech_breakthrough"
+to_id = "infra_overload"
+strength = 0.4
+
+[resource]
+script = ExtResource("3_hidden")
+result_id = "system_collapse"
+required_strength = 3.5
+max_steps = 7
+candidates = Array[ExtResource("1_hidden")]([SubResource("Resource_result"), SubResource("Resource_cause1"), SubResource("Resource_cause2"), SubResource("Resource_cause3"), SubResource("Resource_cause4"), SubResource("Resource_cause5"), SubResource("Resource_cause6"), SubResource("Resource_cause7"), SubResource("Resource_cause8"), SubResource("Resource_cause9"), SubResource("Resource_cause10"), SubResource("Resource_cause11")])
+rules = Array[ExtResource("2_hidden")]([SubResource("Resource_rule1"), SubResource("Resource_rule2"), SubResource("Resource_rule3"), SubResource("Resource_rule4"), SubResource("Resource_rule5"), SubResource("Resource_rule6"), SubResource("Resource_rule7"), SubResource("Resource_rule8"), SubResource("Resource_rule9"), SubResource("Resource_rule10"), SubResource("Resource_rule11"), SubResource("Resource_rule12"), SubResource("Resource_rule13")])
+valid_paths = Array[Dictionary]([
+	{
+		"name": "主流叙事",
+		"path": ["tech_breakthrough", "job_displacement", "social_unrest", "system_collapse"],
+		"difficulty": 1,
+		"bonus_multiplier": 1.0
+	},
+	{
+		"name": "隐藏路径",
+		"path": ["climate_event", "infra_overload", "system_collapse"],
+		"difficulty": 2,
+		"bonus_multiplier": 1.3
+	},
+	{
+		"name": "黑天鹅链",
+		"path": ["resource_scarcity", "competition", "conflict_escalation", "system_collapse"],
+		"difficulty": 3,
+		"bonus_multiplier": 1.5
+	}
+])

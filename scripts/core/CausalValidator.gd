@@ -44,6 +44,27 @@ func validate_chain(chain: Array[String], level: LevelData) -> Dictionary:
 	if chain[chain.size() - 1] != level.result_id:
 		errors.append("因果链必须以结果节点结尾")
 	
+	# 检查干扰节点
+	var distractor_nodes: Array[String] = []
+	var distractor_count = 0
+	for node_id in chain:
+		if node_id == level.result_id:
+			continue
+		var node = _find_node_by_id(node_id, level.candidates)
+		if node and node.is_distractor:
+			distractor_nodes.append(node_id)
+			distractor_count += 1
+			var distractor_msg = "使用了干扰节点：%s" % node.label
+			if node.distractor_type:
+				match node.distractor_type:
+					"pseudo":
+						distractor_msg += "（伪因果）"
+					"reverse":
+						distractor_msg += "（反向因果）"
+					"weak":
+						distractor_msg += "（弱因果）"
+			errors.append(distractor_msg)
+	
 	# 检查因果链是否连续（每个相邻节点是否有规则）
 	for i in range(chain.size() - 1):
 		var from_id = chain[i]
@@ -63,7 +84,9 @@ func validate_chain(chain: Array[String], level: LevelData) -> Dictionary:
 		"passed": errors.is_empty(),
 		"strength": total_strength,
 		"errors": errors,
-		"chain_length": chain.size()
+		"chain_length": chain.size(),
+		"distractor_count": distractor_count,
+		"distractor_nodes": distractor_nodes
 	}
 
 ## 查找规则
@@ -71,6 +94,13 @@ func _find_rule(from_id: String, to_id: String, rules: Array[CausalRule]) -> Cau
 	for rule in rules:
 		if rule.from_id == from_id and rule.to_id == to_id:
 			return rule
+	return null
+
+## 查找节点
+func _find_node_by_id(node_id: String, nodes: Array[CauseNode]) -> CauseNode:
+	for node in nodes:
+		if node.id == node_id:
+			return node
 	return null
 
 ## 计算评分等级
@@ -91,8 +121,13 @@ func calculate_grade(chain: Array[String], result: Dictionary) -> String:
 	var step_diff = abs(chain.size() - ideal_steps)
 	var step_score = clamp(1.0 - (step_diff * 0.15), 0.0, 1.0)
 	
+	# 干扰节点惩罚（如果有干扰节点，降低评分）
+	var distractor_penalty = 0.0
+	if result.has("distractor_count") and result.distractor_count > 0:
+		distractor_penalty = result.distractor_count * 0.2  # 每个干扰节点降低20%评分
+	
 	# 综合得分
-	var final_score = strength_score * 0.6 + step_score * 0.4
+	var final_score = (strength_score * 0.6 + step_score * 0.4) * (1.0 - distractor_penalty)
 	
 	# 评级
 	if final_score > 0.85:

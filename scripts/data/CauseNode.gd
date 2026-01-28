@@ -8,3 +8,5 @@ extends Resource
 @export var label: String = ""
 @export var tags: Array[String] = []
 @export var time_stage: int = 1  # 0=early, 1=mid, 2=late
+@export var is_distractor: bool = false  # 是否为干扰节点
+@export var distractor_type: String = ""  # 干扰类型：pseudo（伪因果）、reverse（反向因果）、weak（弱因果）
