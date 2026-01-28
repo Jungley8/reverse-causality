@@ -111,11 +111,18 @@ func _play_grade_up_animation():
 	tween.tween_property(grade_label, "modulate", original_color, 0.2).set_delay(0.2)
 
 func _get_grade_symbol(grade: String) -> String:
-	match grade:
-		"S": return "███ S 级"
-		"A": return "██░ A 级"
-		"B": return "█░░ B 级"
-		_: return "░░░ 未通过"
+	if I18nManager:
+		match grade:
+			"S": return I18nManager.translate("ui.result_panel.grade_s")
+			"A": return I18nManager.translate("ui.result_panel.grade_a")
+			"B": return I18nManager.translate("ui.result_panel.grade_b")
+			_: return I18nManager.translate("ui.result_panel.grade_fail")
+	else:
+		match grade:
+			"S": return "███ S 级"
+			"A": return "██░ A 级"
+			"B": return "█░░ B 级"
+			_: return "░░░ 未通过"
 
 func _get_grade_color(grade: String) -> Color:
 	match grade:
@@ -149,13 +156,21 @@ func _animate_bars(completeness: float, strength_ratio: float, cleanliness: floa
 	tween.tween_property(cleanliness_bar, "value", cleanliness * 100, 0.5)
 
 func _get_comment(grade: String) -> String:
-	var comments = {
-		"S": "你构建了一条高度自洽的系统性因果链。\n在现实世界中，这种推理能力极其稀缺。",
-		"A": "逻辑成立，但你忽略了至少一个关键中介。\n试试能否找到更完整的路径？",
-		"B": "相关性被当成了因果性。\n这是人类最常见的推理陷阱。",
-		"FAIL": "因果链存在断裂或逻辑冲突。\n重新审视节点之间的连接关系。"
-	}
-	return comments.get(grade, "")
+	if I18nManager:
+		match grade:
+			"S": return I18nManager.translate("ui.result_panel.comment_s")
+			"A": return I18nManager.translate("ui.result_panel.comment_a")
+			"B": return I18nManager.translate("ui.result_panel.comment_b")
+			"FAIL": return I18nManager.translate("ui.result_panel.comment_fail")
+			_: return ""
+	else:
+		var comments = {
+			"S": "你构建了一条高度自洽的系统性因果链。\n在现实世界中，这种推理能力极其稀缺。",
+			"A": "逻辑成立，但你忽略了至少一个关键中介。\n试试能否找到更完整的路径？",
+			"B": "相关性被当成了因果性。\n这是人类最常见的推理陷阱。",
+			"FAIL": "因果链存在断裂或逻辑冲突。\n重新审视节点之间的连接关系。"
+		}
+		return comments.get(grade, "")
 
 func _on_next_pressed():
 	next_level_pressed.emit()

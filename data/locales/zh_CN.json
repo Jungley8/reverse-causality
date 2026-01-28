@@ -1,0 +1,97 @@
+{
+	"ui": {
+		"main_menu": {
+			"start_game": "开始游戏",
+			"continue_game": "继续游戏",
+			"archive": "因果图鉴",
+			"title": "逆果溯因",
+			"subtitle": "REVERSE CAUSALITY"
+		},
+		"level_select": {
+			"title": "选择关卡",
+			"back": "← 返回",
+			"level": "关卡"
+		},
+		"game": {
+			"level": "关卡",
+			"result_node": "结果节点",
+			"strength": "因果强度",
+			"validate": "验证",
+			"clear": "清空",
+			"arrow": "→",
+			"result": "结果",
+			"strength_format": "{current} / {required}",
+			"strength_empty": "0.0 / 0.0",
+			"error_min_nodes": "请至少放置 2 个因果节点"
+		},
+		"result_panel": {
+			"grade_s": "███ S 级",
+			"grade_a": "██░ A 级",
+			"grade_b": "█░░ B 级",
+			"grade_fail": "░░░ 未通过",
+			"comment_s": "完美！你构建了一条完美的因果链。",
+			"comment_a": "很好！你的因果链逻辑清晰。",
+			"comment_b": "不错！你找到了基本的因果关系。",
+			"comment_fail": "因果链不完整，请重新尝试。",
+			"next_level": "下一关",
+			"retry": "重新挑战",
+			"back": "返回"
+		},
+		"archive": {
+			"title": "因果图鉴",
+			"back": "← 返回",
+			"levels": "关卡",
+			"resonances": "共振",
+			"world_logs": "世界线",
+			"no_levels": "暂无完成的关卡",
+			"no_resonances": "暂无解锁的共振模式",
+			"no_logs": "暂无世界线日志",
+			"level": "关卡",
+			"best_chain": "最佳因果链：",
+			"discovered_paths": "发现的路径：",
+			"completed_time": "完成时间：",
+			"unknown_time": "未知",
+			"bonus_multiplier": "加成倍数：{value}x",
+			"time_format": "{year}-{month:02d}-{day:02d} {hour:02d}:{minute:02d}"
+		},
+		"error": {
+			"loading": "加载中...",
+			"loading_percent": "加载中... {percent}%",
+			"unknown_error": "发生未知错误。",
+			"load_failed": "加载失败，请刷新页面重试。"
+		},
+		"tutorial": {
+			"start_game": "开始游戏",
+			"continue": "继续"
+		},
+		"level_card": {
+			"locked": "🔒",
+			"completed": "✓",
+			"incomplete": "○",
+			"grade": "{grade}级",
+			"not_completed": "未完成"
+		},
+		"chain_slot": {
+			"placeholder": "?",
+			"valid": "✓",
+			"invalid": "✗"
+		}
+	},
+	"levels": {
+		"level_01": "城市系统性崩溃",
+		"level_02": "全面禁止通用AI",
+		"level_03": "AI被赋予有限法律人格",
+		"level_hidden_01": "隐藏关卡"
+	},
+	"resonances": {
+		"luddite_loop": "卢德循环",
+		"black_swan": "黑天鹅事件",
+		"info_cascade": "信息级联",
+		"tech_dependency": "技术依赖陷阱"
+	},
+	"paths": {
+		"mainstream": "主流叙事",
+		"hidden": "隐藏路径",
+		"black_swan": "黑天鹅链"
+	}
+}

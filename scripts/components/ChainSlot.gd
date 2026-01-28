@@ -21,25 +21,76 @@ var current_card: CauseCard = null
 @onready var placeholder_label = $PlaceholderLabel
 
 func _ready():
+	_setup_style()
 	_update_visual()
 
+func _setup_style():
+	# 创建基础样式
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0.1, 0.12, 0.15, 0.5)  # 半透明深色背景
+	style.border_color = Color(0.3, 0.35, 0.4, 0.8)  # 浅色边框
+	style.border_width_left = 2
+	style.border_width_top = 2
+	style.border_width_right = 2
+	style.border_width_bottom = 2
+	style.corner_radius_top_left = 4
+	style.corner_radius_top_right = 4
+	style.corner_radius_bottom_left = 4
+	style.corner_radius_bottom_right = 4
+	
+	add_theme_stylebox_override("panel", style)
+	
+	# 设置占位符标签样式
+	if placeholder_label:
+		placeholder_label.add_theme_font_size_override("font_size", 24)
+		placeholder_label.add_theme_color_override("font_color", ThemeManager.get_color("text_primary"))
+
 func _update_visual():
+	var style = get_theme_stylebox("panel") as StyleBoxFlat
+	if not style:
+		_setup_style()
+		style = get_theme_stylebox("panel") as StyleBoxFlat
+	
+	if not style:
+		return
+	
 	match current_state:
 		State.EMPTY:
-			modulate = Color(0.2, 0.2, 0.2)
+			style.bg_color = Color(0.1, 0.12, 0.15, 0.3)
+			style.border_color = Color(0.3, 0.35, 0.4, 0.5)
+			modulate = Color.WHITE
 			placeholder_label.visible = true
-			placeholder_label.text = "?"
+			if I18nManager:
+				placeholder_label.text = I18nManager.translate("ui.chain_slot.placeholder")
+			else:
+				placeholder_label.text = "?"
 		State.FILLED:
-			modulate = Color(0.3, 0.3, 0.3)
+			style.bg_color = Color(0.15, 0.18, 0.22, 0.6)
+			style.border_color = Color(0.4, 0.45, 0.5, 0.8)
+			modulate = Color.WHITE
 			placeholder_label.visible = false
 		State.HOVER_VALID:
-			modulate = Color(0.6, 1.0, 0.6)
+			style.bg_color = Color(0.2, 0.4, 0.2, 0.8)
+			style.border_color = ThemeManager.get_color("causal_strong")
+			modulate = Color(1.1, 1.1, 1.0)
 			placeholder_label.visible = true
-			placeholder_label.text = "✓"
+			if I18nManager:
+				placeholder_label.text = I18nManager.translate("ui.chain_slot.valid")
+			else:
+				placeholder_label.text = "✓"
+			if placeholder_label:
+				placeholder_label.modulate = ThemeManager.get_color("causal_strong")
 		State.HOVER_INVALID:
-			modulate = Color(1.0, 0.4, 0.4)
+			style.bg_color = Color(0.4, 0.2, 0.2, 0.8)
+			style.border_color = ThemeManager.get_color("error")
+			modulate = Color(1.0, 0.9, 0.9)
 			placeholder_label.visible = true
-			placeholder_label.text = "✗"
+			if I18nManager:
+				placeholder_label.text = I18nManager.translate("ui.chain_slot.invalid")
+			else:
+				placeholder_label.text = "✗"
+			if placeholder_label:
+				placeholder_label.modulate = ThemeManager.get_color("error")
 
 ## 检查是否可以接受卡片
 func can_accept_card(card: CauseCard) -> bool:

@@ -27,6 +27,8 @@ GameManager="*res://scripts/core/GameManager.gd"
 AudioManager="*res://scripts/core/AudioManager.gd"
 ResponsiveUI="*res://scripts/core/ResponsiveUI.gd"
 UndoRedoManager="*res://scripts/core/UndoRedoManager.gd"
+Preloader="*res://scripts/core/Preloader.gd"
+I18nManager="*res://scripts/core/I18nManager.gd"
 
 [editor_plugins]
 

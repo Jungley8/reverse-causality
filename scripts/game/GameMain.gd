@@ -47,14 +47,20 @@ func _setup_level():
 		return
 	
 	# 设置关卡标题
-	level_label.text = "关卡 %02d" % GameManager.current_level_id
+	if I18nManager:
+		level_label.text = I18nManager.translate("ui.game.level") + " %02d" % GameManager.current_level_id
+	else:
+		level_label.text = "关卡 %02d" % GameManager.current_level_id
 	
 	# 设置结果卡片
 	var result_node = _find_node_by_id(current_level.result_id, current_level.candidates)
 	if result_node:
 		result_card.text = result_node.label
 	else:
-		result_card.text = "结果节点"
+		if I18nManager:
+			result_card.text = I18nManager.translate("ui.game.result_node")
+		else:
+			result_card.text = "结果节点"
 	
 	# 创建候选节点卡片
 	_create_candidate_cards()
@@ -110,7 +116,10 @@ func _create_chain_slots():
 		
 		# 添加箭头
 		var arrow = Label.new()
-		arrow.text = "→"
+		if I18nManager:
+			arrow.text = I18nManager.translate("ui.game.arrow")
+		else:
+			arrow.text = "→"
 		arrow.add_theme_font_size_override("font_size", 24)
 		arrow.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		arrow.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -118,7 +127,10 @@ func _create_chain_slots():
 	
 	# 添加结果节点显示（固定）
 	var result_slot = Label.new()
-	result_slot.text = "结果"
+	if I18nManager:
+		result_slot.text = I18nManager.translate("ui.game.result")
+	else:
+		result_slot.text = "结果"
 	result_slot.add_theme_font_size_override("font_size", 16)
 	result_slot.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	result_slot.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -216,7 +228,10 @@ func _update_strength_bar():
 		tween.tween_property(strength_bar, "value", target_value, 0.3).set_ease(Tween.EASE_OUT)
 		
 		# 更新标签
-		strength_label.text = "%.1f / %.1f" % [strength, current_level.required_strength]
+		if I18nManager:
+			strength_label.text = I18nManager.translate("ui.game.strength_format", {"current": "%.1f" % strength, "required": "%.1f" % current_level.required_strength})
+		else:
+			strength_label.text = "%.1f / %.1f" % [strength, current_level.required_strength]
 		
 		# 根据强度设置颜色反馈
 		var color: Color
@@ -230,13 +245,19 @@ func _update_strength_bar():
 		tween.parallel().tween_property(strength_bar, "modulate", color, 0.3)
 	else:
 		strength_bar.value = 0.0
-		strength_label.text = "0.0 / 0.0"
+		if I18nManager:
+			strength_label.text = I18nManager.translate("ui.game.strength_empty")
+		else:
+			strength_label.text = "0.0 / 0.0"
 
 func _on_validate_pressed():
 	var chain = _get_current_chain()
 	
 	if chain.size() < 2:
-		_show_error("请至少放置 2 个因果节点")
+		if I18nManager:
+			_show_error(I18nManager.translate("ui.game.error_min_nodes"))
+		else:
+			_show_error("请至少放置 2 个因果节点")
 		return
 	
 	# 播放验证音效

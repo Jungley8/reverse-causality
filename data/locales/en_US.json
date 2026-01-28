@@ -1,0 +1,97 @@
+{
+	"ui": {
+		"main_menu": {
+			"start_game": "Start Game",
+			"continue_game": "Continue",
+			"archive": "Archive",
+			"title": "Reverse Causality",
+			"subtitle": "REVERSE CAUSALITY"
+		},
+		"level_select": {
+			"title": "Select Level",
+			"back": "← Back",
+			"level": "Level"
+		},
+		"game": {
+			"level": "Level",
+			"result_node": "Result Node",
+			"strength": "Causal Strength",
+			"validate": "Validate",
+			"clear": "Clear",
+			"arrow": "→",
+			"result": "Result",
+			"strength_format": "{current} / {required}",
+			"strength_empty": "0.0 / 0.0",
+			"error_min_nodes": "Please place at least 2 causal nodes"
+		},
+		"result_panel": {
+			"grade_s": "███ S Rank",
+			"grade_a": "██░ A Rank",
+			"grade_b": "█░░ B Rank",
+			"grade_fail": "░░░ Failed",
+			"comment_s": "Perfect! You built a perfect causal chain.",
+			"comment_a": "Great! Your causal chain is logically clear.",
+			"comment_b": "Good! You found the basic causal relationship.",
+			"comment_fail": "Causal chain incomplete, please try again.",
+			"next_level": "Next Level",
+			"retry": "Retry",
+			"back": "Back"
+		},
+		"archive": {
+			"title": "Archive",
+			"back": "← Back",
+			"levels": "Levels",
+			"resonances": "Resonances",
+			"world_logs": "World Logs",
+			"no_levels": "No completed levels",
+			"no_resonances": "No unlocked resonance patterns",
+			"no_logs": "No world logs",
+			"level": "Level",
+			"best_chain": "Best Chain:",
+			"discovered_paths": "Discovered Paths:",
+			"completed_time": "Completed:",
+			"unknown_time": "Unknown",
+			"bonus_multiplier": "Bonus: {value}x",
+			"time_format": "{year}-{month:02d}-{day:02d} {hour:02d}:{minute:02d}"
+		},
+		"error": {
+			"loading": "Loading...",
+			"loading_percent": "Loading... {percent}%",
+			"unknown_error": "An unknown error occurred.",
+			"load_failed": "Load failed, please refresh the page."
+		},
+		"tutorial": {
+			"start_game": "Start Game",
+			"continue": "Continue"
+		},
+		"level_card": {
+			"locked": "🔒",
+			"completed": "✓",
+			"incomplete": "○",
+			"grade": "{grade} Rank",
+			"not_completed": "Not Completed"
+		},
+		"chain_slot": {
+			"placeholder": "?",
+			"valid": "✓",
+			"invalid": "✗"
+		}
+	},
+	"levels": {
+		"level_01": "Systemic Urban Collapse",
+		"level_02": "Universal AI Ban",
+		"level_03": "AI Granted Limited Legal Personhood",
+		"level_hidden_01": "Hidden Level"
+	},
+	"resonances": {
+		"luddite_loop": "Luddite Loop",
+		"black_swan": "Black Swan Event",
+		"info_cascade": "Information Cascade",
+		"tech_dependency": "Technology Dependency Trap"
+	},
+	"paths": {
+		"mainstream": "Mainstream Narrative",
+		"hidden": "Hidden Path",
+		"black_swan": "Black Swan Chain"
+	}
+}

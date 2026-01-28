@@ -39,6 +39,16 @@ func _apply_scale_to_root():
 	# 使用Stretch模式来处理响应式布局
 	# Godot的viewport stretch设置应该在项目设置中配置
 	# 这里主要提供缩放比例信息，供UI节点使用
+	
+	# 确保根节点使用正确的缩放模式
+	var root = get_tree().root
+	if root:
+		# 通知所有需要响应式调整的节点
+		_notify_ui_nodes()
+
+func _notify_ui_nodes():
+	# 发送信号，让UI节点知道缩放已改变
+	# UI节点可以监听此信号并调整自己的布局
 	pass
 
 ## 获取当前缩放比例

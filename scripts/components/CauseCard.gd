@@ -25,14 +25,37 @@ func _update_visual():
 	if not cause_data:
 		return
 	
+	# 创建基础样式
+	var style = StyleBoxFlat.new()
+	
 	# 如果是干扰节点，使用偏红的背景色
 	if cause_data.is_distractor:
-		var style = StyleBoxFlat.new()
 		style.bg_color = Color(0.4, 0.2, 0.2)  # 偏红色背景
-		add_theme_stylebox_override("panel", style)
+		style.border_color = ThemeManager.get_color("error")
 	else:
-		# 正常节点使用默认样式
-		remove_theme_stylebox_override("panel")
+		# 正常节点使用深色背景
+		style.bg_color = Color(0.15, 0.18, 0.22)  # 深灰蓝色
+		style.border_color = Color(0.3, 0.35, 0.4)  # 浅灰蓝色边框
+	
+	# 添加边框和圆角
+	style.border_width_left = 1
+	style.border_width_top = 1
+	style.border_width_right = 1
+	style.border_width_bottom = 1
+	style.corner_radius_top_left = 6
+	style.corner_radius_top_right = 6
+	style.corner_radius_bottom_left = 6
+	style.corner_radius_bottom_right = 6
+	
+	# 添加轻微阴影效果（通过边框模拟）
+	style.shadow_color = Color(0, 0, 0, 0.3)
+	style.shadow_size = 2
+	
+	add_theme_stylebox_override("panel", style)
+	
+	# 应用文本颜色
+	if label:
+		label.add_theme_color_override("font_color", ThemeManager.get_color("text_primary"))
 
 func _on_mouse_entered():
 	if not is_used and not is_dragging:
