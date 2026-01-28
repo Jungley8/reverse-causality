@@ -10,6 +10,21 @@ var previous_unlock_states: Dictionary = {}  # 记录之前的解锁状态
 @onready var title_label = $Header/Title
 
 func _ready():
+	# 初始化并应用主题
+	ThemeManager.initialize()
+	ThemeManager.apply_theme_to_scene(self)
+	
+	# 设置背景色
+	var background = get_node_or_null("Background")
+	if background and background is ColorRect:
+		background.color = ThemeManager.get_color("background")
+	
+	# 为按钮和标签设置主题类型
+	if back_button:
+		back_button.theme_type_variation = "ButtonSecondary"
+	if title_label:
+		title_label.theme_type_variation = "LabelH2"
+	
 	# 检查是否需要显示教程
 	if not SaveGame.save_data.get("tutorial_completed", false):
 		get_tree().change_scene_to_file("res://scenes/tutorial/Tutorial.tscn")

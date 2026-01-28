@@ -18,7 +18,18 @@ var current_tab: TabType = TabType.LEVELS
 @onready var world_logs_tab = $TabContainer/WorldLogs
 
 func _ready():
+	# 初始化并应用主题
+	ThemeManager.initialize()
+	ThemeManager.apply_theme_to_scene(self)
+	
+	# 设置背景色
+	var background = get_node_or_null("Background")
+	if background and background is ColorRect:
+		background.color = ThemeManager.get_color("background")
+	
+	# 为按钮设置主题类型
 	if back_button:
+		back_button.theme_type_variation = "ButtonSecondary"
 		back_button.pressed.connect(_on_back_pressed)
 	
 	if tab_container:

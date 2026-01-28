@@ -21,76 +21,57 @@ var current_card: CauseCard = null
 @onready var placeholder_label = $PlaceholderLabel
 
 func _ready():
-	_setup_style()
 	_update_visual()
 
-func _setup_style():
-	# 创建基础样式
-	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0.1, 0.12, 0.15, 0.5)  # 半透明深色背景
-	style.border_color = Color(0.3, 0.35, 0.4, 0.8)  # 浅色边框
-	style.border_width_left = 2
-	style.border_width_top = 2
-	style.border_width_right = 2
-	style.border_width_bottom = 2
-	style.corner_radius_top_left = 4
-	style.corner_radius_top_right = 4
-	style.corner_radius_bottom_left = 4
-	style.corner_radius_bottom_right = 4
-	
-	add_theme_stylebox_override("panel", style)
-	
-	# 设置占位符标签样式
-	if placeholder_label:
-		placeholder_label.add_theme_font_size_override("font_size", 24)
-		placeholder_label.add_theme_color_override("font_color", ThemeManager.get_color("text_primary"))
+func _get_state_name() -> String:
+	match current_state:
+		State.EMPTY: return "empty"
+		State.HOVER_VALID: return "hover_valid"
+		State.HOVER_INVALID: return "hover_invalid"
+		State.FILLED: return "filled"
+		_: return "empty"
 
 func _update_visual():
-	var style = get_theme_stylebox("panel") as StyleBoxFlat
-	if not style:
-		_setup_style()
-		style = get_theme_stylebox("panel") as StyleBoxFlat
+	var state_name = _get_state_name()
+	var style = ThemeManager.create_slot_style(state_name)
+	add_theme_stylebox_override("panel", style)
 	
-	if not style:
-		return
-	
+	# 更新占位符
 	match current_state:
 		State.EMPTY:
-			style.bg_color = Color(0.1, 0.12, 0.15, 0.3)
-			style.border_color = Color(0.3, 0.35, 0.4, 0.5)
 			modulate = Color.WHITE
-			placeholder_label.visible = true
-			if I18nManager:
-				placeholder_label.text = I18nManager.translate("ui.chain_slot.placeholder")
-			else:
-				placeholder_label.text = "?"
+			if placeholder_label:
+				placeholder_label.visible = true
+				if I18nManager:
+					placeholder_label.text = I18nManager.translate("ui.chain_slot.placeholder")
+				else:
+					placeholder_label.text = "?"
+				placeholder_label.add_theme_color_override("font_color", ThemeManager.get_color("text_primary"))
+				placeholder_label.add_theme_font_size_override("font_size", 56)  # 更大的占位符字体
 		State.FILLED:
-			style.bg_color = Color(0.15, 0.18, 0.22, 0.6)
-			style.border_color = Color(0.4, 0.45, 0.5, 0.8)
 			modulate = Color.WHITE
-			placeholder_label.visible = false
+			if placeholder_label:
+				placeholder_label.visible = false
 		State.HOVER_VALID:
-			style.bg_color = Color(0.2, 0.4, 0.2, 0.8)
-			style.border_color = ThemeManager.get_color("causal_strong")
 			modulate = Color(1.1, 1.1, 1.0)
-			placeholder_label.visible = true
-			if I18nManager:
-				placeholder_label.text = I18nManager.translate("ui.chain_slot.valid")
-			else:
-				placeholder_label.text = "✓"
 			if placeholder_label:
-				placeholder_label.modulate = ThemeManager.get_color("causal_strong")
+				placeholder_label.visible = true
+				if I18nManager:
+					placeholder_label.text = I18nManager.translate("ui.chain_slot.valid")
+				else:
+					placeholder_label.text = "✓"
+				placeholder_label.add_theme_color_override("font_color", ThemeManager.get_color("success"))
+				placeholder_label.add_theme_font_size_override("font_size", 56)  # 更大的占位符字体
 		State.HOVER_INVALID:
-			style.bg_color = Color(0.4, 0.2, 0.2, 0.8)
-			style.border_color = ThemeManager.get_color("error")
 			modulate = Color(1.0, 0.9, 0.9)
-			placeholder_label.visible = true
-			if I18nManager:
-				placeholder_label.text = I18nManager.translate("ui.chain_slot.invalid")
-			else:
-				placeholder_label.text = "✗"
 			if placeholder_label:
-				placeholder_label.modulate = ThemeManager.get_color("error")
+				placeholder_label.visible = true
+				if I18nManager:
+					placeholder_label.text = I18nManager.translate("ui.chain_slot.invalid")
+				else:
+					placeholder_label.text = "✗"
+				placeholder_label.add_theme_color_override("font_color", ThemeManager.get_color("error"))
+				placeholder_label.add_theme_font_size_override("font_size", 56)  # 更大的占位符字体
 
 ## 检查是否可以接受卡片
 func can_accept_card(card: CauseCard) -> bool:
@@ -144,10 +125,14 @@ func place_card(card: CauseCard):
 	card.set_used(true)
 	
 	# 放置动画：平滑移动到槽位中心并调整大小
+	card_clone.scale = Vector2(0.8, 0.8)
+	card_clone.modulate.a = 0.0
 	var tween = create_tween()
 	tween.set_parallel(true)
-	tween.tween_property(card_clone, "position", Vector2.ZERO, 0.3).set_ease(Tween.EASE_OUT)
-	tween.tween_property(card_clone, "size", size, 0.3).set_ease(Tween.EASE_OUT)
+	tween.tween_property(card_clone, "position", Vector2.ZERO, 0.2).set_ease(Tween.EASE_OUT)
+	tween.tween_property(card_clone, "size", size, 0.2).set_ease(Tween.EASE_OUT)
+	tween.tween_property(card_clone, "scale", Vector2.ONE, 0.2).set_ease(Tween.EASE_OUT)
+	tween.tween_property(card_clone, "modulate:a", 1.0, 0.2)
 	
 	_update_visual()
 	card_placed.emit(self, card)
@@ -163,8 +148,11 @@ func remove_card():
 	
 	current_state = State.EMPTY
 	
-	# 清除槽内卡片
+	# 清除槽内卡片（带淡出动画）
 	for child in card_container.get_children():
+		var tween = create_tween()
+		tween.tween_property(child, "modulate:a", 0.0, 0.15)
+		await tween.finished
 		child.queue_free()
 	
 	_update_visual()

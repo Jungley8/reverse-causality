@@ -21,6 +21,29 @@ var is_undoing_redoing: bool = false  # 标记是否正在执行撤销/重做，
 @onready var error_toast = $ErrorToast
 
 func _ready():
+	# 初始化并应用主题
+	ThemeManager.initialize()
+	ThemeManager.apply_theme_to_scene(self)
+	
+	# 设置背景色
+	var background = get_node_or_null("Background")
+	if background and background is ColorRect:
+		background.color = ThemeManager.get_color("background")
+	
+	# 为按钮设置主题类型
+	if validate_button:
+		validate_button.theme_type_variation = "ButtonPrimary"
+	if clear_button:
+		clear_button.theme_type_variation = "ButtonSecondary"
+	
+	# 为标签设置主题类型
+	if level_label:
+		level_label.theme_type_variation = "LabelH2"
+	if result_card:
+		result_card.theme_type_variation = "LabelH3"
+	if strength_label:
+		strength_label.theme_type_variation = "LabelSecondary"
+	
 	# 清空历史记录（新关卡开始）
 	UndoRedoManager.clear()
 	
@@ -114,26 +137,32 @@ func _create_chain_slots():
 		slot.card_placed.connect(_on_card_placed)
 		slot.card_removed.connect(_on_card_removed)
 		
-		# 添加箭头
+		# 添加箭头（更大、更明显）
 		var arrow = Label.new()
 		if I18nManager:
 			arrow.text = I18nManager.translate("ui.game.arrow")
 		else:
 			arrow.text = "→"
-		arrow.add_theme_font_size_override("font_size", 24)
+		arrow.add_theme_font_size_override("font_size", 32)
+		arrow.add_theme_color_override("font_color", ThemeManager.get_color("info"))
 		arrow.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		arrow.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		# 设置箭头的最小尺寸，确保有足够空间
+		arrow.custom_minimum_size = Vector2(32, 120)
 		chain_slots_container.add_child(arrow)
 	
-	# 添加结果节点显示（固定）
+	# 添加结果节点显示（固定，更大更明显）
 	var result_slot = Label.new()
 	if I18nManager:
 		result_slot.text = I18nManager.translate("ui.game.result")
 	else:
 		result_slot.text = "结果"
-	result_slot.add_theme_font_size_override("font_size", 16)
+	result_slot.add_theme_font_size_override("font_size", 20)
+	result_slot.add_theme_color_override("font_color", ThemeManager.get_color("success"))
 	result_slot.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	result_slot.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	# 设置结果节点的最小尺寸，与槽位一致
+	result_slot.custom_minimum_size = Vector2(180, 120)
 	chain_slots_container.add_child(result_slot)
 
 func _connect_signals():

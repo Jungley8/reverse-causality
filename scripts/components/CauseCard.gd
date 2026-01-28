@@ -16,56 +16,75 @@ var original_position: Vector2
 
 func _ready():
 	if cause_data:
-		label.text = cause_data.label
-		_update_visual()
+		_setup_visuals()
 	mouse_entered.connect(_on_mouse_entered)
 	mouse_exited.connect(_on_mouse_exited)
 
-func _update_visual():
+func _setup_visuals():
 	if not cause_data:
 		return
 	
-	# 创建基础样式
-	var style = StyleBoxFlat.new()
-	
-	# 如果是干扰节点，使用偏红的背景色
-	if cause_data.is_distractor:
-		style.bg_color = Color(0.4, 0.2, 0.2)  # 偏红色背景
-		style.border_color = ThemeManager.get_color("error")
-	else:
-		# 正常节点使用深色背景
-		style.bg_color = Color(0.15, 0.18, 0.22)  # 深灰蓝色
-		style.border_color = Color(0.3, 0.35, 0.4)  # 浅灰蓝色边框
-	
-	# 添加边框和圆角
-	style.border_width_left = 1
-	style.border_width_top = 1
-	style.border_width_right = 1
-	style.border_width_bottom = 1
-	style.corner_radius_top_left = 6
-	style.corner_radius_top_right = 6
-	style.corner_radius_bottom_left = 6
-	style.corner_radius_bottom_right = 6
-	
-	# 添加轻微阴影效果（通过边框模拟）
-	style.shadow_color = Color(0, 0, 0, 0.3)
-	style.shadow_size = 2
-	
+	# 使用主题样式
+	var style = ThemeManager.create_card_style(cause_data.is_distractor)
 	add_theme_stylebox_override("panel", style)
 	
-	# 应用文本颜色
+	# 设置文本（更大的字体以匹配新的卡片尺寸）
 	if label:
+		label.text = cause_data.label
 		label.add_theme_color_override("font_color", ThemeManager.get_color("text_primary"))
+		label.add_theme_font_size_override("font_size", 18)  # 更大的字体
 
 func _on_mouse_entered():
 	if not is_used and not is_dragging:
-		var tween = create_tween()
-		tween.tween_property(self, "scale", Vector2(1.05, 1.05), 0.1)
+		_apply_hover_effect()
 
 func _on_mouse_exited():
 	if not is_dragging:
-		var tween = create_tween()
-		tween.tween_property(self, "scale", Vector2.ONE, 0.1)
+		_remove_hover_effect()
+
+func _apply_hover_effect():
+	# 更明显的缩放动画
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(self, "scale", Vector2(1.08, 1.08), 0.2).set_ease(Tween.EASE_OUT)
+	
+	# 更新样式
+	if cause_data:
+		var hover_style = ThemeManager.create_card_style(cause_data.is_distractor)
+		hover_style.bg_color = Color("#1E232E")  # CARD_BG_HOVER
+		if cause_data.is_distractor:
+			hover_style.border_color = Color("#F85149")  # 危险色
+		else:
+			hover_style.border_color = Color("#58A6FF")  # 蓝色强调
+		hover_style.border_width_left = 3
+		hover_style.border_width_top = 3
+		hover_style.border_width_right = 3
+		hover_style.border_width_bottom = 3
+		
+		# 添加更明显的光晕
+		var shadow = _shadow_md()
+		if not cause_data.is_distractor:
+			# 蓝色光晕
+			hover_style.shadow_color = Color(88, 166, 255, 0.4)
+		else:
+			# 红色光晕
+			hover_style.shadow_color = Color(248, 81, 73, 0.4)
+		hover_style.shadow_size = 12
+		hover_style.shadow_offset = Vector2(0, 4)
+		
+		add_theme_stylebox_override("panel", hover_style)
+
+func _shadow_md() -> Dictionary:
+	return {"shadow_color": Color(0, 0, 0, 0.25), "shadow_size": 4, "shadow_offset": Vector2(0, 2)}
+
+func _remove_hover_effect():
+	var tween = create_tween()
+	tween.tween_property(self, "scale", Vector2.ONE, 0.15).set_ease(Tween.EASE_OUT)
+	
+	# 恢复原样式
+	if cause_data:
+		var normal_style = ThemeManager.create_card_style(cause_data.is_distractor)
+		add_theme_stylebox_override("panel", normal_style)
 
 ## 开始拖拽
 func _get_drag_data(_at_position: Vector2):
@@ -74,6 +93,7 @@ func _get_drag_data(_at_position: Vector2):
 	
 	is_dragging = true
 	original_position = global_position
+	z_index = 100
 	
 	# 播放拖拽音效
 	if AudioManager:
@@ -82,8 +102,8 @@ func _get_drag_data(_at_position: Vector2):
 	# 拖拽动画：轻微放大 + 半透明
 	var tween = create_tween()
 	tween.set_parallel(true)
-	tween.tween_property(self, "scale", Vector2(1.05, 1.05), 0.1)
-	tween.tween_property(self, "modulate:a", 0.7, 0.1)
+	tween.tween_property(self, "scale", Vector2(1.1, 1.1), 0.1).set_ease(Tween.EASE_OUT)
+	tween.tween_property(self, "modulate:a", 0.8, 0.1)
 	
 	drag_started.emit(self)
 	
@@ -99,10 +119,11 @@ func _notification(what):
 	if what == NOTIFICATION_DRAG_END:
 		if is_dragging:
 			is_dragging = false
+			z_index = 0
 			# 恢复动画
 			var tween = create_tween()
 			tween.set_parallel(true)
-			tween.tween_property(self, "scale", Vector2.ONE, 0.1)
+			tween.tween_property(self, "scale", Vector2.ONE, 0.1).set_ease(Tween.EASE_OUT)
 			tween.tween_property(self, "modulate:a", 1.0, 0.1)
 			drag_ended.emit(self)
 
@@ -120,6 +141,6 @@ func set_used(used: bool):
 func return_to_original():
 	var tween = create_tween()
 	tween.set_parallel(true)
-	tween.tween_property(self, "global_position", original_position, 0.3).set_ease(Tween.EASE_OUT)
-	tween.tween_property(self, "scale", Vector2.ONE, 0.3)
-	tween.tween_property(self, "modulate:a", 1.0, 0.3)
+	tween.tween_property(self, "global_position", original_position, 0.3).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	tween.tween_property(self, "scale", Vector2.ONE, 0.2).set_ease(Tween.EASE_OUT)
+	tween.tween_property(self, "modulate:a", 1.0, 0.2)

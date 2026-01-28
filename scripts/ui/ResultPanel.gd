@@ -21,6 +21,24 @@ var current_chain: Array[String] = []
 @onready var share_button = $VBox/Buttons/ShareButton
 
 func _ready():
+	# 初始化并应用主题
+	ThemeManager.initialize()
+	ThemeManager.apply_theme_to_scene(self)
+	
+	# 为按钮和标签设置主题类型
+	if next_button:
+		next_button.theme_type_variation = "ButtonPrimary"
+	if retry_button:
+		retry_button.theme_type_variation = "ButtonSecondary"
+	if share_button:
+		share_button.theme_type_variation = "ButtonSecondary"
+	if grade_label:
+		grade_label.theme_type_variation = "LabelH1"
+	if comment_label:
+		comment_label.theme_type_variation = "LabelSecondary"
+	if unlock_label:
+		unlock_label.theme_type_variation = "LabelSecondary"
+	
 	visible = false
 	next_button.pressed.connect(_on_next_pressed)
 	retry_button.pressed.connect(_on_retry_pressed)
