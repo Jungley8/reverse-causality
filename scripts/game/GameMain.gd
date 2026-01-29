@@ -8,18 +8,19 @@ var current_dragging_card: CauseCard = null
 var chain_slots: Array[ChainSlot] = []
 var is_undoing_redoing: bool = false  # 标记是否正在执行撤销/重做，避免重复记录
 
-@onready var level_label = $Header/LevelLabel
-@onready var result_card = $ResultCardContainer/ResultCard
-@onready var strength_bar = $StrengthBar
-@onready var strength_label = $StrengthBar/StrengthLabel
-@onready var chain_area = $ChainArea
-@onready var chain_slots_container = $ChainArea/ChainSlots
-@onready var candidate_grid = $CandidateArea/CandidateGrid
-@onready var validate_button = $ActionButtons/ValidateButton
-@onready var clear_button = $ActionButtons/ClearButton
+@onready var back_button = $MainVBox/Header/BackButton
+@onready var level_label = $MainVBox/Header/LevelLabel
+@onready var result_card = $MainVBox/ResultCardContainer/ResultCard
+@onready var strength_bar = $MainVBox/StrengthBar
+@onready var strength_label = $MainVBox/StrengthBar/StrengthLabel
+@onready var chain_area = $MainVBox/ChainArea
+@onready var chain_slots_container = $MainVBox/ChainArea/ChainSlots
+@onready var candidate_grid = $MainVBox/CandidateArea/CandidateGrid
+@onready var validate_button = $MainVBox/ActionButtons/ValidateButton
+@onready var clear_button = $MainVBox/ActionButtons/ClearButton
 @onready var result_panel = $ResultPanel
 @onready var error_toast = $ErrorToast
-@onready var settings_button = $Header/SettingsButton
+@onready var settings_button = $MainVBox/Header/SettingsButton
 @onready var settings_panel = $SettingsPanel
 
 func _ready():
@@ -31,16 +32,26 @@ func _ready():
 	var background = get_node_or_null("Background")
 	if background and background is ColorRect:
 		background.color = ThemeManager.get_color("background")
+	
+	# 设置层级
+	# 确保 SettingsPanel 和 ResultPanel 高于拖拽层（模态弹窗）
+	if settings_panel:
+		settings_panel.z_index = UITokens.LAYER.DRAG_DROP + 10  # 高于拖拽层
+	if result_panel:
+		result_panel.z_index = UITokens.LAYER.DRAG_DROP + 10  # 高于拖拽层
+	
 	# 因果链区、候选区使用抬升面板样式
 	if chain_area:
 		chain_area.theme_type_variation = "PanelElevated"
-	var candidate_area = get_node_or_null("CandidateArea")
+	var candidate_area = get_node_or_null("MainVBox/CandidateArea")
 	if candidate_area:
 		candidate_area.theme_type_variation = "PanelElevated"
 	var settings_close = get_node_or_null("SettingsPanel/VBox/CloseButton")
 	if settings_close:
 		settings_close.theme_type_variation = "ButtonSecondary"
 	# 为按钮设置主题类型
+	if back_button:
+		back_button.theme_type_variation = "ButtonSecondary"
 	if validate_button:
 		validate_button.theme_type_variation = "ButtonPrimary"
 	if clear_button:
@@ -57,6 +68,10 @@ func _ready():
 	if settings_panel:
 		settings_panel.visible = false
 		_refresh_settings_ui()
+	
+	# 更新按钮文本
+	_update_button_text()
+	
 	# 清空历史记录（新关卡开始）
 	UndoRedoManager.clear()
 	# 从 GameManager 获取当前关卡
@@ -64,7 +79,7 @@ func _ready():
 		current_level = GameManager.current_level
 		_setup_level()
 	else:
-		# 如果没有，默认加载关卡1
+		# 如果没有，默认加载关卡 1
 		_load_level(1)
 	_connect_signals()
 
@@ -82,29 +97,25 @@ func _setup_level():
 		return
 	
 	# 设置关卡标题
-	if I18nManager:
-		level_label.text = I18nManager.translate("ui.game.level") + " %02d" % GameManager.current_level_id
-	else:
-		level_label.text = "关卡 %02d" % GameManager.current_level_id
+	level_label.text = I18nManager.translate("ui.game.level") + " %02d" % GameManager.current_level_id
 	
 	# 设置结果卡片
 	var result_node = _find_node_by_id(current_level.result_id, current_level.candidates)
 	if result_node:
-		result_card.text = result_node.label
-	else:
-		if I18nManager:
-			result_card.text = I18nManager.translate("ui.game.result_node")
+		# 先尝试从语言包获取翻译
+		var translated = I18nManager.translate("nodes." + result_node.id)
+		if translated.begins_with("nodes."):
+			result_card.text = result_node.label
 		else:
-			result_card.text = "结果节点"
+			result_card.text = translated
+	else:
+		result_card.text = I18nManager.translate("ui.game.result_node")
 	
 	# 创建候选节点卡片
 	_create_candidate_cards()
 	
 	# 创建因果链槽位
 	_create_chain_slots()
-	
-	# 更新强度条
-	_update_strength_bar()
 
 func _find_node_by_id(node_id: String, nodes: Array[CauseNode]) -> CauseNode:
 	for node in nodes:
@@ -149,35 +160,39 @@ func _create_chain_slots():
 		slot.card_placed.connect(_on_card_placed)
 		slot.card_removed.connect(_on_card_removed)
 		
-		# 添加箭头（更大、更明显）
+		# 添加箭头
 		var arrow = Label.new()
-		if I18nManager:
-			arrow.text = I18nManager.translate("ui.game.arrow")
-		else:
-			arrow.text = "→"
-		arrow.add_theme_font_size_override("font_size", 32)
+		arrow.text = I18nManager.translate("ui.game.arrow")
+		arrow.add_theme_font_size_override("font_size", 28)
 		arrow.add_theme_color_override("font_color", ThemeManager.get_color("info"))
 		arrow.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		arrow.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		# 设置箭头的最小尺寸，确保有足够空间
-		arrow.custom_minimum_size = Vector2(32, 120)
+		arrow.custom_minimum_size = Vector2(32, 150)
 		chain_slots_container.add_child(arrow)
 	
-	# 添加结果节点显示（固定，更大更明显）
+	# 添加结果节点显示
 	var result_slot = Label.new()
-	if I18nManager:
-		result_slot.text = I18nManager.translate("ui.game.result")
-	else:
-		result_slot.text = "结果"
-	result_slot.add_theme_font_size_override("font_size", 20)
+	result_slot.text = I18nManager.translate("ui.game.result")
+	result_slot.add_theme_font_size_override("font_size", 18)
 	result_slot.add_theme_color_override("font_color", ThemeManager.get_color("success"))
 	result_slot.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	result_slot.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	# 设置结果节点的最小尺寸，与槽位一致
-	result_slot.custom_minimum_size = Vector2(180, 120)
+	result_slot.custom_minimum_size = Vector2(180, 150)
 	chain_slots_container.add_child(result_slot)
 
+func _update_button_text():
+	if back_button:
+		back_button.text = I18nManager.translate("ui.level_select.back")
+	if validate_button:
+		validate_button.text = I18nManager.translate("ui.game.validate")
+	if clear_button:
+		clear_button.text = I18nManager.translate("ui.game.clear")
+	if settings_button:
+		settings_button.text = I18nManager.translate("ui.settings.title")
+
 func _connect_signals():
+	if back_button:
+		back_button.pressed.connect(_on_back_pressed)
 	validate_button.pressed.connect(_on_validate_pressed)
 	clear_button.pressed.connect(_on_clear_pressed)
 	if settings_button:
@@ -198,17 +213,20 @@ func _connect_signals():
 
 func _on_card_drag_started(card: CauseCard):
 	current_dragging_card = card
+	card.z_index = UITokens.LAYER.DRAG_DROP
 	_update_slot_hints(card)
 
 func _on_card_drag_ended(card: CauseCard):
 	current_dragging_card = null
 	_clear_slot_hints()
 	
+	# 恢复层级 (如果 CauseCard 默认 z-index 是 0 或其他，这里重置)
+	if card:
+		card.z_index = 0
+	
 	# 如果卡片没有被使用（放置失败），返回原位置
 	if card and not card.is_used:
 		card.return_to_original()
-	
-	_update_strength_bar()
 
 func _update_slot_hints(card: CauseCard):
 	for slot in chain_slots:
@@ -232,8 +250,6 @@ func _on_card_placed(slot: ChainSlot, card: CauseCard):
 		var slot_index = chain_slots.find(slot)
 		if slot_index >= 0 and card and card.cause_data:
 			UndoRedoManager.record_place(slot_index, card.cause_data.id)
-	
-	_update_strength_bar()
 
 func _on_card_removed(slot: ChainSlot, card_id: String):
 	# 记录操作到撤销/重做管理器（如果不是在执行撤销/重做）
@@ -241,8 +257,6 @@ func _on_card_removed(slot: ChainSlot, card_id: String):
 		var slot_index = chain_slots.find(slot)
 		if slot_index >= 0:
 			UndoRedoManager.record_remove(slot_index, card_id)
-	
-	_update_strength_bar()
 
 func _get_current_chain() -> Array[String]:
 	var chain: Array[String] = []
@@ -284,10 +298,7 @@ func _update_strength_bar():
 		tween.tween_property(strength_bar, "value", target_value, 0.3).set_ease(Tween.EASE_OUT)
 		
 		# 更新标签
-		if I18nManager:
-			strength_label.text = I18nManager.translate("ui.game.strength_format", {"current": "%.1f" % strength, "required": "%.1f" % current_level.required_strength})
-		else:
-			strength_label.text = "%.1f / %.1f" % [strength, current_level.required_strength]
+		strength_label.text = I18nManager.translate("ui.game.strength_format", {"current": "%.1f" % strength, "required": "%.1f" % current_level.required_strength})
 		
 		# 根据强度设置颜色反馈（暖色系）
 		var color: Color
@@ -300,19 +311,13 @@ func _update_strength_bar():
 		tween.parallel().tween_property(strength_bar, "modulate", color, 0.3)
 	else:
 		strength_bar.value = 0.0
-		if I18nManager:
-			strength_label.text = I18nManager.translate("ui.game.strength_empty")
-		else:
-			strength_label.text = "0.0 / 0.0"
+		strength_label.text = I18nManager.translate("ui.game.strength_empty")
 
 func _on_validate_pressed():
 	var chain = _get_current_chain()
 	
 	if chain.size() < 2:
-		if I18nManager:
-			_show_error(I18nManager.translate("ui.game.error_min_nodes"))
-		else:
-			_show_error("请至少放置 2 个因果节点")
+		_show_error(I18nManager.translate("ui.game.error_min_nodes"))
 		return
 	
 	# 播放验证音效
@@ -355,7 +360,7 @@ func _on_validate_pressed():
 	if not result.passed and result.has("errors") and not result.errors.is_empty():
 		var error_msg = result.errors[0]  # 显示第一个错误
 		if result.errors.size() > 1:
-			error_msg += "（还有 %d 个问题）" % (result.errors.size() - 1)
+			error_msg += I18nManager.translate("ui.result_panel.more_errors", {"count": str(result.errors.size() - 1)})
 		_show_error(error_msg)
 		# 播放失败音效
 		if AudioManager:
@@ -403,16 +408,13 @@ func _on_result_retry():
 	# 重新挑战当前关卡
 	for slot in chain_slots:
 		slot.remove_card()
-	_update_strength_bar()
 
 func _on_clear_pressed():
 	for slot in chain_slots:
 		slot.remove_card()
 	UndoRedoManager.clear()  # 清空撤销/重做历史
-	_update_strength_bar()
 
 func _show_error(message: String):
-	print("错误：", message)
 	if error_toast:
 		error_toast.show_error(message)
 
@@ -420,14 +422,19 @@ func _on_share_done(success: bool):
 	if not error_toast:
 		return
 	if success:
-		error_toast.show_success(I18nManager.translate("ui.result_panel.share_copied") if I18nManager else "已复制到剪贴板")
+		error_toast.show_success(I18nManager.translate("ui.result_panel.share_copied"))
 	else:
-		error_toast.show_error(I18nManager.translate("ui.result_panel.share_failed") if I18nManager else "复制失败，请手动复制")
+		error_toast.show_error(I18nManager.translate("ui.result_panel.share_failed"))
 
 func _on_settings_pressed():
 	if settings_panel:
 		_refresh_settings_ui()
 		settings_panel.visible = true
+		settings_panel.move_to_front() # 确保在最上层
+		# ErrorToast 应该是唯一比它高的（z_index 100 vs 20）
+
+func _on_back_pressed():
+	get_tree().change_scene_to_file("res://scenes/ui/LevelSelect.tscn")
 
 func _on_settings_close():
 	if settings_panel:
@@ -436,17 +443,17 @@ func _on_settings_close():
 func _refresh_settings_ui():
 	if not settings_panel:
 		return
-	if I18nManager:
-		var title = settings_panel.get_node_or_null("VBox/TitleLabel")
-		if title: title.text = I18nManager.translate("ui.settings.title")
-		var sl = settings_panel.get_node_or_null("VBox/SoundLabel")
-		if sl: sl.text = I18nManager.translate("ui.settings.sound")
-		var ml = settings_panel.get_node_or_null("VBox/MusicLabel")
-		if ml: ml.text = I18nManager.translate("ui.settings.music")
-		var ll = settings_panel.get_node_or_null("VBox/LanguageLabel")
-		if ll: ll.text = I18nManager.translate("ui.settings.language")
-		var close_btn = settings_panel.get_node_or_null("VBox/CloseButton")
-		if close_btn: close_btn.text = I18nManager.translate("ui.settings.close")
+	var title = settings_panel.get_node_or_null("VBox/TitleLabel")
+	if title: title.text = I18nManager.translate("ui.settings.title")
+	var sl = settings_panel.get_node_or_null("VBox/SoundLabel")
+	if sl: sl.text = I18nManager.translate("ui.settings.sound")
+	var ml = settings_panel.get_node_or_null("VBox/MusicLabel")
+	if ml: ml.text = I18nManager.translate("ui.settings.music")
+	var ll = settings_panel.get_node_or_null("VBox/LanguageLabel")
+	if ll: ll.text = I18nManager.translate("ui.settings.language")
+	var close_btn = settings_panel.get_node_or_null("VBox/CloseButton")
+	if close_btn: close_btn.text = I18nManager.translate("ui.settings.close")
+	
 	var settings = SaveGame.save_data.get("settings", {})
 	var sound_slider = settings_panel.get_node_or_null("VBox/SoundSlider")
 	if sound_slider:
@@ -455,7 +462,7 @@ func _refresh_settings_ui():
 	if music_slider:
 		music_slider.value = (settings.get("music_volume", 0.7) * 100.0)
 	var lang_option = settings_panel.get_node_or_null("VBox/LanguageOption")
-	if lang_option and I18nManager:
+	if lang_option:
 		lang_option.clear()
 		var langs = I18nManager.get_available_languages()
 		for lang in langs:
@@ -474,12 +481,11 @@ func _on_music_changed(value: float):
 		AudioManager.set_music_volume(value / 100.0)
 
 func _on_language_selected(index: int):
-	if I18nManager:
-		var langs = I18nManager.get_available_languages()
-		if index >= 0 and index < langs.size():
-			I18nManager.set_language(langs[index])
-			_setup_level()
-			_refresh_settings_ui()
+	var langs = I18nManager.get_available_languages()
+	if index >= 0 and index < langs.size():
+		I18nManager.set_language(langs[index])
+		_setup_level()
+		_refresh_settings_ui()
 
 func _input(event: InputEvent):
 	# 处理撤销/重做快捷键
@@ -518,7 +524,6 @@ func _undo():
 					slot.place_card(card)
 	
 	is_undoing_redoing = false
-	_update_strength_bar()
 
 func _redo():
 	if not UndoRedoManager.can_redo():
@@ -546,7 +551,6 @@ func _redo():
 					slot.remove_card()
 	
 	is_undoing_redoing = false
-	_update_strength_bar()
 
 func _find_card_by_id(card_id: String) -> CauseCard:
 	for child in candidate_grid.get_children():

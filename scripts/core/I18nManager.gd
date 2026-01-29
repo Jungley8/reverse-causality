@@ -9,9 +9,13 @@ const DEFAULT_LANGUAGE = "zh_CN"
 const LOCALE_PATH = "res://data/locales/"
 
 var current_language: String = DEFAULT_LANGUAGE
+var default_translations: Dictionary = {}
 var translations: Dictionary = {}
 
 func _ready():
+	# 预加载默认语言包作为后备
+	_load_default_locale()
+	
 	# 从SaveGame加载语言偏好
 	var settings = SaveGame.save_data.get("settings", {})
 	var saved_language = settings.get("language", DEFAULT_LANGUAGE)
@@ -64,6 +68,23 @@ func _load_locale(language: String):
 		push_error("语言包解析失败: " + json.get_error_message())
 		translations = {}
 
+## 加载默认语言包
+func _load_default_locale():
+	var locale_file = LOCALE_PATH + DEFAULT_LANGUAGE + ".json"
+	if not ResourceLoader.exists(locale_file):
+		return
+		
+	var file = FileAccess.open(locale_file, FileAccess.READ)
+	if not file:
+		return
+		
+	var content = file.get_as_text()
+	file.close()
+	
+	var json = JSON.new()
+	if json.parse(content) == OK:
+		default_translations = json.data
+
 ## 翻译文本
 ## key: 翻译键，格式如 "ui.main_menu.start_game"
 ## format_dict: 可选的格式化字典，用于替换 {key} 占位符
@@ -97,25 +118,9 @@ func translate(key: String, format_dict: Dictionary = {}) -> String:
 
 ## 使用默认语言作为后备
 func _translate_fallback(key: String, format_dict: Dictionary = {}) -> String:
-	var locale_file = LOCALE_PATH + DEFAULT_LANGUAGE + ".json"
-	
-	if not ResourceLoader.exists(locale_file):
+	if default_translations.is_empty():
 		return key
-	
-	var file = FileAccess.open(locale_file, FileAccess.READ)
-	if not file:
-		return key
-	
-	var content = file.get_as_text()
-	file.close()
-	
-	var json = JSON.new()
-	var error = json.parse(content)
-	
-	if error != OK:
-		return key
-	
-	var default_translations = json.data
+		
 	var keys = key.split(".")
 	var value = default_translations
 	

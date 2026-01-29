@@ -5,9 +5,9 @@ extends Control
 var current_level_id: int = 1
 var previous_unlock_states: Dictionary = {}  # 记录之前的解锁状态
 
-@onready var level_grid = $LevelGrid
-@onready var back_button = $Header/BackButton
-@onready var title_label = $Header/Title
+@onready var level_grid = $MainVBox/LevelGrid
+@onready var back_button = $MainVBox/Header/BackButton
+@onready var title_label = $MainVBox/Header/Title
 
 func _ready():
 	# 初始化并应用主题
@@ -34,8 +34,7 @@ func _ready():
 	_update_ui_text()
 	
 	# 监听语言变化
-	if I18nManager:
-		I18nManager.language_changed.connect(_on_language_changed)
+	I18nManager.language_changed.connect(_on_language_changed)
 	
 	# 加载之前的解锁状态（用于检测新解锁）
 	_load_previous_unlock_states()
@@ -46,9 +45,6 @@ func _ready():
 			back_button.pressed.connect(_on_back_pressed)
 
 func _update_ui_text():
-	if not I18nManager:
-		return
-	
 	if back_button:
 		back_button.text = I18nManager.translate("ui.level_select.back")
 	if title_label:
@@ -108,7 +104,7 @@ func _load_level_states():
 		var hidden_card_scene = preload("res://scenes/components/LevelCard.tscn")
 		var hidden_card = hidden_card_scene.instantiate() as LevelCard
 		hidden_card.level_id = 101  # 使用101作为隐藏关卡ID
-		hidden_card.level_title = I18nManager.translate("levels.level_hidden_01") if I18nManager else "隐藏关卡：因果迷宫"
+		hidden_card.level_title = I18nManager.translate("levels.level_hidden_01")
 		hidden_card.is_locked = false
 		hidden_card.modulate = Color(1.0, 0.9, 0.7)  # 金色调
 		hidden_card.level_selected.connect(_on_level_selected)
@@ -119,14 +115,6 @@ func _show_unlock_notification(level_id: int):
 	print("新关卡解锁：关卡 %02d" % level_id)
 
 func _get_level_title(level_id: int) -> String:
-	if not I18nManager:
-		match level_id:
-			1: return "城市崩溃"
-			2: return "AI禁令"
-			3: return "法律人格"
-			101: return "隐藏关卡：因果迷宫"
-			_: return "关卡 %d" % level_id
-	
 	match level_id:
 		1: return I18nManager.translate("levels.level_01")
 		2: return I18nManager.translate("levels.level_02")

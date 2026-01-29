@@ -10,6 +10,7 @@ var tween: Tween = null
 
 func _ready():
 	visible = false
+	z_index = UITokens.LAYER.UI_TOAST
 
 ## 显示错误消息（红色）
 func show_error(message: String, duration: float = 3.0):

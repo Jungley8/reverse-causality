@@ -2,11 +2,11 @@ extends Control
 
 ## 主菜单控制器
 
-@onready var continue_btn = $MenuButtons/ContinueButton
-@onready var start_button = $MenuButtons/StartButton
-@onready var archive_button = $MenuButtons/ArchiveButton
-@onready var game_title = $TitleContainer/GameTitle
-@onready var subtitle = $TitleContainer/Subtitle
+@onready var continue_btn = $MainVBox/MenuButtons/ContinueButton
+@onready var start_button = $MainVBox/MenuButtons/StartButton
+@onready var archive_button = $MainVBox/MenuButtons/ArchiveButton
+@onready var game_title = $MainVBox/TitleContainer/GameTitle
+@onready var subtitle = $MainVBox/TitleContainer/Subtitle
 
 func _ready():
 	# 设置背景色
@@ -37,13 +37,9 @@ func _ready():
 	_update_ui_text()
 	
 	# 监听语言变化
-	if I18nManager:
-		I18nManager.language_changed.connect(_on_language_changed)
+	I18nManager.language_changed.connect(_on_language_changed)
 
 func _update_ui_text():
-	if not I18nManager:
-		return
-	
 	if start_button:
 		start_button.text = I18nManager.translate("ui.main_menu.start_game")
 	if continue_btn:

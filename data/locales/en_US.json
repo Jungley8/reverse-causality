@@ -35,9 +35,14 @@
 			"comment_fail": "Causal chain incomplete, please try again.",
 			"next_level": "Next Level",
 			"retry": "Retry",
+			"share": "Share",
 			"back": "Back",
+			"new_path": "New Path Found",
+			"path": "Path",
+			"unlocked": "Unlocked",
 			"share_copied": "Copied to clipboard",
-			"share_failed": "Copy failed, please copy manually"
+			"share_failed": "Copy failed, please copy manually",
+			"more_errors": " ({count} more issues)"
 		},
 		"settings": {
 			"title": "Settings",
@@ -56,9 +61,9 @@
 			"no_resonances": "No unlocked resonance patterns",
 			"no_logs": "No world logs",
 			"level": "Level",
-			"best_chain": "Best Chain:",
-			"discovered_paths": "Discovered Paths:",
-			"completed_time": "Completed:",
+			"best_chain": "Best Chain: ",
+			"discovered_paths": "Discovered Paths: ",
+			"completed_time": "Completed: ",
 			"unknown_time": "Unknown",
 			"bonus_multiplier": "Bonus: {value}x",
 			"time_format": "{year}-{month:02d}-{day:02d} {hour:02d}:{minute:02d}"
@@ -74,9 +79,9 @@
 			"continue": "Continue"
 		},
 		"level_card": {
-			"locked": "🔒",
-			"completed": "✓",
-			"incomplete": "○",
+			"locked": "[Locked]",
+			"completed": "[Done]",
+			"incomplete": "[Play]",
 			"grade": "{grade} Rank",
 			"not_completed": "Not Completed"
 		},
@@ -85,6 +90,31 @@
 			"valid": "✓",
 			"invalid": "✗"
 		}
+	},
+	"validator": {
+		"chain_empty": "Causal chain is empty",
+		"chain_min_nodes": "Causal chain requires at least 2 nodes",
+		"chain_too_long": "Causal chain too long (max {max} steps)",
+		"node_duplicate": "Duplicate node: {node}",
+		"chain_must_end_result": "Causal chain must end with result node",
+		"distractor_used": "Used distractor node: {label}",
+		"distractor_pseudo": " (pseudo-causal)",
+		"distractor_reverse": " (reverse causal)",
+		"distractor_weak": " (weak causal)",
+		"chain_broken": "Causal break: {from} → {to} invalid",
+		"strength_insufficient": "Insufficient causal strength ({current} / {required})"
+	},
+	"tutorial": {
+		"step1_title": "Welcome to Reverse Causality",
+		"step1_content": "This is a causal reasoning game.\nYou need to build causal chains to explain results.",
+		"step2_title": "Drag Cards",
+		"step2_content": "Drag causal nodes from the left to the slots on the right.",
+		"step3_title": "Build Causal Chain",
+		"step3_content": "Arrange nodes in order to build a causal chain from cause to effect.",
+		"step4_title": "Validate Chain",
+		"step4_content": "Click the Validate button to check if your causal chain is correct.",
+		"continue": "Continue",
+		"start_game": "Start Game"
 	},
 	"levels": {
 		"level_01": "Systemic Urban Collapse",
@@ -102,5 +132,40 @@
 		"mainstream": "Mainstream Narrative",
 		"hidden": "Hidden Path",
 		"black_swan": "Black Swan Chain"
+	},
+	"nodes": {
+		"city_system_collapse": "2038: Systemic Urban Collapse",
+		"tech_breakthrough": "General Automation Tech Breakthrough",
+		"job_displacement": "Mass Structural Unemployment",
+		"welfare_lag": "Welfare System Response Lag",
+		"social_unrest": "Social Mood Deterioration",
+		"infra_overload": "Long-term Infrastructure Overload",
+		"capital_flight": "Capital Flight",
+		"climate_event": "Extreme Climate Event",
+		"misinformation": "Information System Noise Pollution",
+		"ai_ban": "2042: Country-wide Universal AI Ban",
+		"ai_military_incident": "Serious AI Military System Incident",
+		"public_fear": "Public Panic Escalation",
+		"political_opportunism": "Political Forces Seizing Opportunity",
+		"regulatory_capture": "Regulation Captured by Vested Interests",
+		"tech_backlash": "Total Collapse of Tech Trust",
+		"foreign_competition": "Foreign AI Leadership",
+		"ethics_report": "High-Risk Ethics Assessment Report",
+		"social_media_spike": "Social Media Discussion Surge",
+		"ai_legal_personhood": "2050: AI Granted Limited Legal Personhood",
+		"autonomous_economy": "AI Full Economic Participation",
+		"contract_dispute": "Mass AI Contract Disputes",
+		"accountability_gap": "Accountability Cannot Be Attributed",
+		"legal_deadlock": "Current Law Becomes Ineffective",
+		"judicial_pressure": "Judicial System Burden Explosion",
+		"corporate_lobbying": "Corporate Legislative Lobbying",
+		"public_acceptance": "Gradual Social Psychological Acceptance",
+		"media_framing": "Media Narrative Guidance"
+	},
+	"share": {
+		"title": "[Reverse Causality] Level {level}",
+		"grade": "Grade: {grade}",
+		"chain": "Causal Chain: {chain}",
+		"play_now": "Try it yourself!"
 	}
 }

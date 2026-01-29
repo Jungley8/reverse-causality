@@ -23,18 +23,18 @@ func _update_visuals():
 	
 	if is_locked:
 		modulate = Color(0.4, 0.4, 0.4)
-		status_icon.text = "🔒"
+		status_icon.text = I18nManager.translate("ui.level_card.locked")
 		grade_label.text = ""
 		mouse_filter = MOUSE_FILTER_IGNORE
 	else:
 		modulate = Color.WHITE
 		var grade = SaveGame.get_level_grade(level_id)
 		if grade:
-			status_icon.text = "✓"
-			grade_label.text = grade + "级"
+			status_icon.text = I18nManager.translate("ui.level_card.completed")
+			grade_label.text = I18nManager.translate("ui.level_card.grade", {"grade": grade})
 		else:
-			status_icon.text = "○"
-			grade_label.text = "未完成"
+			status_icon.text = I18nManager.translate("ui.level_card.incomplete")
+			grade_label.text = I18nManager.translate("ui.level_card.not_completed")
 		mouse_filter = MOUSE_FILTER_STOP
 
 func _gui_input(event):

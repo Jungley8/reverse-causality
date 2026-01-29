@@ -15,21 +15,21 @@ static func generate_share_text(level_id: int, chain: Array[String], grade: Stri
 	var text_parts: Array[String] = []
 	
 	# 标题
-	text_parts.append("我在《逆果溯因》中构建了一条因果链：")
+	text_parts.append(I18nManager.translate("share.title", {"level": str(level_id)}))
 	text_parts.append("")
 	
 	# 因果链（转换为标签）
 	var chain_labels = _get_chain_labels(level_id, chain)
-	text_parts.append(" → ".join(chain_labels))
+	text_parts.append(I18nManager.translate("share.chain", {"chain": " → ".join(chain_labels)}))
 	text_parts.append("")
 	
 	# 评分
-	text_parts.append("评分：" + grade + "级")
+	text_parts.append(I18nManager.translate("share.grade", {"grade": grade}))
 	
 	# 发现的路径
 	if result.has("path_info") and result.path_info.get("matched", false):
 		var path_name = result.path_info.get("path_name", "")
-		text_parts.append("发现的路径：" + path_name)
+		text_parts.append(I18nManager.translate("ui.result_panel.path") + "：" + path_name)
 	
 	# 解锁的共振
 	if result.has("resonances") and not result.resonances.is_empty():
@@ -38,10 +38,10 @@ static func generate_share_text(level_id: int, chain: Array[String], grade: Stri
 			if resonance.get("is_new", false):
 				resonance_names.append(resonance.get("name", ""))
 		if not resonance_names.is_empty():
-			text_parts.append("解锁共振：" + "、".join(resonance_names))
+			text_parts.append(I18nManager.translate("ui.result_panel.unlocked") + "：" + "、".join(resonance_names))
 	
 	text_parts.append("")
-	text_parts.append("#逆果溯因 #推理游戏")
+	text_parts.append(I18nManager.translate("share.play_now"))
 	
 	return "\n".join(text_parts)
 
@@ -61,17 +61,26 @@ static func _get_chain_labels(level_id: int, chain: Array[String]) -> Array[Stri
 	if not level_data:
 		return chain
 	
-	# 创建ID到标签的映射
+	# 创建 ID到标签的映射，优先使用 i18n
 	var id_to_label = {}
 	for candidate in level_data.candidates:
-		id_to_label[candidate.id] = candidate.label
+		var translated = I18nManager.translate("nodes." + candidate.id)
+		if translated.begins_with("nodes."):
+			id_to_label[candidate.id] = candidate.label
+		else:
+			id_to_label[candidate.id] = translated
 	
-	# 转换ID为标签
+	# 转换 ID 为标签
 	for node_id in chain:
 		if id_to_label.has(node_id):
 			labels.append(id_to_label[node_id])
 		else:
-			labels.append(node_id)
+			# 如果没有在 level 中找到，尝试直接翻译
+			var translated = I18nManager.translate("nodes." + node_id)
+			if translated.begins_with("nodes."):
+				labels.append(node_id)
+			else:
+				labels.append(translated)
 	
 	return labels
 

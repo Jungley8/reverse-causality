@@ -14,7 +14,7 @@ func validate_chain(chain: Array[String], level: LevelData) -> Dictionary:
 	
 	# 边界情况检查
 	if chain.is_empty():
-		errors.append("因果链为空")
+		errors.append(I18nManager.translate("validator.chain_empty"))
 		return {
 			"passed": false,
 			"strength": 0.0,
@@ -22,7 +22,7 @@ func validate_chain(chain: Array[String], level: LevelData) -> Dictionary:
 		}
 	
 	if chain.size() == 1:
-		errors.append("因果链至少需要2个节点")
+		errors.append(I18nManager.translate("validator.chain_min_nodes"))
 		return {
 			"passed": false,
 			"strength": 0.0,
@@ -31,18 +31,18 @@ func validate_chain(chain: Array[String], level: LevelData) -> Dictionary:
 	
 	# 检查是否超过最大步数
 	if chain.size() > level.max_steps + 1:  # +1 因为包含结果节点
-		errors.append("因果链过长（最多 %d 步）" % level.max_steps)
+		errors.append(I18nManager.translate("validator.chain_too_long", {"max": str(level.max_steps)}))
 	
 	# 检查是否有重复节点
 	var seen_ids = {}
 	for node_id in chain:
 		if seen_ids.has(node_id):
-			errors.append("节点重复：%s" % node_id)
+			errors.append(I18nManager.translate("validator.node_duplicate", {"node": node_id}))
 		seen_ids[node_id] = true
 	
 	# 检查最后一个节点是否为结果节点
 	if chain[chain.size() - 1] != level.result_id:
-		errors.append("因果链必须以结果节点结尾")
+		errors.append(I18nManager.translate("validator.chain_must_end_result"))
 	
 	# 检查干扰节点
 	var distractor_nodes: Array[String] = []
@@ -54,15 +54,19 @@ func validate_chain(chain: Array[String], level: LevelData) -> Dictionary:
 		if node and node.is_distractor:
 			distractor_nodes.append(node_id)
 			distractor_count += 1
-			var distractor_msg = "使用了干扰节点：%s" % node.label
+			# 获取节点翻译
+			var node_label = I18nManager.translate("nodes." + node.id)
+			if node_label.begins_with("nodes."):
+				node_label = node.label
+			var distractor_msg = I18nManager.translate("validator.distractor_used", {"label": node_label})
 			if node.distractor_type:
 				match node.distractor_type:
 					"pseudo":
-						distractor_msg += "（伪因果）"
+						distractor_msg += I18nManager.translate("validator.distractor_pseudo")
 					"reverse":
-						distractor_msg += "（反向因果）"
+						distractor_msg += I18nManager.translate("validator.distractor_reverse")
 					"weak":
-						distractor_msg += "（弱因果）"
+						distractor_msg += I18nManager.translate("validator.distractor_weak")
 			errors.append(distractor_msg)
 	
 	# 检查因果链是否连续（每个相邻节点是否有规则）
@@ -72,13 +76,13 @@ func validate_chain(chain: Array[String], level: LevelData) -> Dictionary:
 		
 		var rule = _find_rule(from_id, to_id, level.rules)
 		if rule == null:
-			errors.append("因果断裂：%s → %s 不成立" % [from_id, to_id])
+			errors.append(I18nManager.translate("validator.chain_broken", {"from": from_id, "to": to_id}))
 		else:
 			total_strength += rule.strength
 	
 	# 检查因果强度是否足够
 	if total_strength < level.required_strength:
-		errors.append("因果强度不足（%.2f / %.2f）" % [total_strength, level.required_strength])
+		errors.append(I18nManager.translate("validator.strength_insufficient", {"current": "%.2f" % total_strength, "required": "%.2f" % level.required_strength}))
 	
 	return {
 		"passed": errors.is_empty(),

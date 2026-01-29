@@ -133,3 +133,11 @@ class SIZE:
 	
 	# 页面
 	const PAGE_PADDING = 40
+
+# === 层级令牌 (Z-Index) ===
+class LAYER:
+	const GAME_WORLD = 0
+	const UI_BASE = 10         # 基础UI (HUD, 菜单)
+	const UI_POPUP = 20        # 弹窗 (设置, 结算)
+	const UI_TOAST = 100       # 提示 (Toast)
+	const DRAG_DROP = 999      # 拖拽物体 (最顶层)

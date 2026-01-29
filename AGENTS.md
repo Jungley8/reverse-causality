@@ -81,8 +81,6 @@ scenes/
 └── tutorial/Tutorial.tscn     # Step-by-step onboarding
 ```
 
-**Scenes are NOT version-controlled** (.tscn files) but scene structures are documented in `SCENE_SETUP.md`.
-
 ### Data Storage
 
 **Save file format:** `user://save_data.json`
@@ -220,23 +218,3 @@ Strings wrapped with `I18nManager.translate("ui.game.level")` etc. Fallback to C
 - **Design specifications**: `m3.md` (UI/UX color system, typography, spacing standards)
 - **Scene setup**: `SCENE_SETUP.md` (node hierarchies, scene creation checklists)
 - **README.md**: High-level game overview, quick start, feature roadmap
-
-## Development Priorities
-
-**P0 (MVP core)**
-- Basic causal validation
-- Drag-and-drop UI
-- 3 playable levels with manual causal rules
-- Save/load system
-
-**P1 (Polish)**
-- Tutorial/onboarding
-- Distractor node identification
-- Path discovery tracking
-- Theme visual refinements
-
-**P2 (Advanced)**
-- Resonance system unlock conditions
-- World log procedural generation
-- Multiple solution path detection
-- Archive/gallery UI completion

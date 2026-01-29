@@ -12,7 +12,7 @@ var is_dragging := false
 var is_used := false
 var original_position: Vector2
 
-@onready var label = $MarginContainer/Label
+@onready var label = $VBox/Label
 
 func _ready():
 	if cause_data:
@@ -28,10 +28,15 @@ func _setup_visuals():
 	var variant = "distractor" if cause_data.is_distractor else "default"
 	add_theme_stylebox_override("panel", UIStyles.card(variant))
 	
-	# 设置文本 - 使用 UIFonts
+	# 设置文本 - i18n
 	if label:
-		label.text = cause_data.label
-		UIFonts.apply_to_label(label, "body_lg")  # 22px 大字体
+		# 先尝试从语言包获取翻译，如果没有则使用 label
+		var translated = I18nManager.translate("nodes." + cause_data.id)
+		if translated.begins_with("nodes."):
+			# 翻译不存在，使用原 label
+			label.text = cause_data.label
+		else:
+			label.text = translated
 
 func _on_mouse_entered():
 	if not is_used and not is_dragging:
@@ -67,7 +72,7 @@ func _get_drag_data(_at_position: Vector2):
 	
 	is_dragging = true
 	original_position = global_position
-	z_index = 100
+	z_index = UITokens.LAYER.DRAG_DROP
 	
 	# 播放拖拽音效
 	if AudioManager:

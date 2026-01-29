@@ -26,6 +26,9 @@ func _ready():
 	ThemeManager.initialize()
 	ThemeManager.apply_theme_to_scene(self)
 	
+	# 设置层级
+	z_index = UITokens.LAYER.UI_POPUP
+	
 	# 为按钮和标签设置主题类型
 	if next_button:
 		next_button.theme_type_variation = "ButtonPrimary"
@@ -44,10 +47,22 @@ func _ready():
 		unlock_label.add_theme_font_size_override("font_size", 18)
 	
 	visible = false
+	
+	# 设置按钮文本
+	_update_button_text()
+	
 	next_button.pressed.connect(_on_next_pressed)
 	retry_button.pressed.connect(_on_retry_pressed)
 	if share_button:
 		share_button.pressed.connect(_on_share_pressed)
+
+func _update_button_text():
+	if next_button:
+		next_button.text = I18nManager.translate("ui.result_panel.next_level")
+	if retry_button:
+		retry_button.text = I18nManager.translate("ui.result_panel.retry")
+	if share_button:
+		share_button.text = I18nManager.translate("ui.result_panel.share")
 
 ## 显示结果
 func show_result(result: Dictionary, grade: String):
@@ -87,9 +102,9 @@ func show_result(result: Dictionary, grade: String):
 		var path_name = result.path_info.get("path_name", "")
 		var is_new = result.path_info.get("is_new", false)
 		if is_new:
-			unlock_texts.append("🛤️ 发现新路径：" + path_name + "（+20%奖励）")
+			unlock_texts.append("🛤️ " + I18nManager.translate("ui.result_panel.new_path") + "：" + path_name + "（+20%）")
 		else:
-			unlock_texts.append("🛤️ 路径：" + path_name)
+			unlock_texts.append("🛤️ " + I18nManager.translate("ui.result_panel.path") + "：" + path_name)
 	
 	# 显示共振信息
 	if result.has("resonances") and not result.resonances.is_empty():
@@ -97,7 +112,7 @@ func show_result(result: Dictionary, grade: String):
 			if resonance.get("is_new", false):
 				unlock_texts.append("✨ " + resonance.get("name", "") + "：" + resonance.get("unlock_text", ""))
 			else:
-				unlock_texts.append("💫 " + resonance.get("name", "") + "（已解锁）")
+				unlock_texts.append("💫 " + resonance.get("name", "") + "（" + I18nManager.translate("ui.result_panel.unlocked") + "）")
 	
 	# 检查其他解锁
 	if result.has("unlocks"):
@@ -133,18 +148,11 @@ func _play_grade_up_animation():
 	tween.tween_property(grade_label, "modulate", original_color, 0.2).set_delay(0.2)
 
 func _get_grade_symbol(grade: String) -> String:
-	if I18nManager:
-		match grade:
-			"S": return I18nManager.translate("ui.result_panel.grade_s")
-			"A": return I18nManager.translate("ui.result_panel.grade_a")
-			"B": return I18nManager.translate("ui.result_panel.grade_b")
-			_: return I18nManager.translate("ui.result_panel.grade_fail")
-	else:
-		match grade:
-			"S": return "███ S 级"
-			"A": return "██░ A 级"
-			"B": return "█░░ B 级"
-			_: return "░░░ 未通过"
+	match grade:
+		"S": return I18nManager.translate("ui.result_panel.grade_s")
+		"A": return I18nManager.translate("ui.result_panel.grade_a")
+		"B": return I18nManager.translate("ui.result_panel.grade_b")
+		_: return I18nManager.translate("ui.result_panel.grade_fail")
 
 func _get_grade_color(grade: String) -> Color:
 	match grade:
@@ -178,21 +186,12 @@ func _animate_bars(completeness: float, strength_ratio: float, cleanliness: floa
 	tween.tween_property(cleanliness_bar, "value", cleanliness * 100, 0.5)
 
 func _get_comment(grade: String) -> String:
-	if I18nManager:
-		match grade:
-			"S": return I18nManager.translate("ui.result_panel.comment_s")
-			"A": return I18nManager.translate("ui.result_panel.comment_a")
-			"B": return I18nManager.translate("ui.result_panel.comment_b")
-			"FAIL": return I18nManager.translate("ui.result_panel.comment_fail")
-			_: return ""
-	else:
-		var comments = {
-			"S": "你构建了一条高度自洽的系统性因果链。\n在现实世界中，这种推理能力极其稀缺。",
-			"A": "逻辑成立，但你忽略了至少一个关键中介。\n试试能否找到更完整的路径？",
-			"B": "相关性被当成了因果性。\n这是人类最常见的推理陷阱。",
-			"FAIL": "因果链存在断裂或逻辑冲突。\n重新审视节点之间的连接关系。"
-		}
-		return comments.get(grade, "")
+	match grade:
+		"S": return I18nManager.translate("ui.result_panel.comment_s")
+		"A": return I18nManager.translate("ui.result_panel.comment_a")
+		"B": return I18nManager.translate("ui.result_panel.comment_b")
+		"FAIL": return I18nManager.translate("ui.result_panel.comment_fail")
+		_: return ""
 
 func _on_next_pressed():
 	next_level_pressed.emit()

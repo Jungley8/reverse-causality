@@ -79,15 +79,15 @@ func _show_step(step: TutorialStep):
 	match step:
 		TutorialStep.INTRO:
 			_show_message(
-				"欢迎来到《逆果溯因》",
-				"你需要从给定的结果，构建一条合理的因果链。\n\n点击继续开始教程..."
+				I18nManager.translate("tutorial.step1_title"),
+				I18nManager.translate("tutorial.step1_content")
 			)
 			_remove_highlight()
 		
 		TutorialStep.DRAG_CARD:
 			_show_message(
-				"拖拽节点",
-				"点击并拖拽下方的节点卡片到上方的槽位中"
+				I18nManager.translate("tutorial.step2_title"),
+				I18nManager.translate("tutorial.step2_content")
 			)
 			await get_tree().process_frame
 			var candidate_grid = tutorial_game_main.get_node_or_null("CandidateArea/CandidateGrid")
@@ -97,8 +97,8 @@ func _show_step(step: TutorialStep):
 		
 		TutorialStep.PLACE_CARD:
 			_show_message(
-				"放置节点",
-				"将节点拖拽到第一个槽位，然后松开鼠标完成放置"
+				I18nManager.translate("tutorial.step3_title"),
+				I18nManager.translate("tutorial.step3_content")
 			)
 			await get_tree().process_frame
 			var chain_slots = tutorial_game_main.get_node_or_null("ChainArea/ChainSlots")
@@ -111,15 +111,15 @@ func _show_step(step: TutorialStep):
 		
 		TutorialStep.BUILD_CHAIN:
 			_show_message(
-				"构建因果链",
-				"继续拖拽更多节点，组成一条完整的因果链\n至少需要 2 个节点才能验证"
+				I18nManager.translate("tutorial.step3_title"),
+				I18nManager.translate("tutorial.step3_content")
 			)
 			_remove_highlight()
 		
 		TutorialStep.VALIDATE:
 			_show_message(
-				"验证结果",
-				"当你构建好因果链后，点击\"验证\"按钮检查你的因果链是否成立"
+				I18nManager.translate("tutorial.step4_title"),
+				I18nManager.translate("tutorial.step4_content")
 			)
 			await get_tree().process_frame
 			var validate_button = tutorial_game_main.get_node_or_null("ActionButtons/ValidateButton")
@@ -128,15 +128,15 @@ func _show_step(step: TutorialStep):
 		
 		TutorialStep.UNDERSTAND_RESULT:
 			_show_message(
-				"理解反馈",
-				"系统会告诉你：\n• 因果是否成立\n• 逻辑强度如何\n• 是否存在问题"
+				I18nManager.translate("tutorial.step4_title"),
+				I18nManager.translate("tutorial.step4_content")
 			)
 			_remove_highlight()
 		
 		TutorialStep.COMPLETE:
 			_show_message(
-				"教程完成！",
-				"现在你可以挑战正式关卡了"
+				I18nManager.translate("tutorial.step1_title"),
+				I18nManager.translate("tutorial.step1_content")
 			)
 			_remove_highlight()
 			# 保存教程完成状态
@@ -144,7 +144,7 @@ func _show_step(step: TutorialStep):
 				SaveGame.save_data["tutorial_completed"] = false
 			SaveGame.save_data["tutorial_completed"] = true
 			SaveGame.save_game()
-			continue_button.text = "开始游戏"
+			continue_button.text = I18nManager.translate("tutorial.start_game")
 
 func _show_message(title: String, text: String):
 	message_title.text = title

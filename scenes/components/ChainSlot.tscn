@@ -1,34 +1,25 @@
-[gd_scene format=3 uid="uid://bt1detngjscrn"]
+[gd_scene load_steps=2 format=3 uid="uid://bt1detngjscrn"]
 
 [ext_resource type="Script" path="res://scripts/components/ChainSlot.gd" id="1_whw20"]
 
 [node name="ChainSlot" type="PanelContainer"]
 layout_mode = 2
-custom_minimum_size = Vector2(180, 120)
+custom_minimum_size = Vector2(180, 350)
 script = ExtResource("1_whw20")
 
-[node name="CardContainer" type="Control" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+
+[node name="CardContainer" type="Control" parent="VBox"]
+layout_mode = 2
 mouse_filter = 2
 
-[node name="PlaceholderLabel" type="Label" parent="."]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -30.0
-offset_top = -30.0
-offset_right = 30.0
-offset_bottom = 30.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="PlaceholderLabel" type="Label" parent="VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
 text = "?"
 horizontal_alignment = 1
 vertical_alignment = 1

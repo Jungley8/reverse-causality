@@ -17,8 +17,8 @@ enum State {
 var current_state: State = State.EMPTY
 var current_card: CauseCard = null
 
-@onready var card_container = $CardContainer
-@onready var placeholder_label = $PlaceholderLabel
+@onready var card_container = $VBox/CardContainer
+@onready var placeholder_label = $VBox/PlaceholderLabel
 
 func _ready():
 	_update_visual()

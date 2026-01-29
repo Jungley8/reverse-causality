@@ -39,15 +39,9 @@ func _ready():
 	_update_ui_text()
 	
 	# 监听语言变化
-	if I18nManager:
-		I18nManager.language_changed.connect(_on_language_changed)
-	
-	_load_current_tab()
+	I18nManager.language_changed.connect(_on_language_changed)
 
 func _update_ui_text():
-	if not I18nManager:
-		return
-	
 	if back_button:
 		back_button.text = I18nManager.translate("ui.archive.back")
 	
@@ -101,10 +95,7 @@ func _load_levels_tab():
 	
 	if level_progress.is_empty():
 		var empty_label = Label.new()
-		if I18nManager:
-			empty_label.text = I18nManager.translate("ui.archive.no_levels")
-		else:
-			empty_label.text = "暂无完成的关卡"
+		empty_label.text = I18nManager.translate("ui.archive.no_levels")
 		empty_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		vbox.add_child(empty_label)
 		return
@@ -130,17 +121,12 @@ func _create_level_entry(parent: Control, level_id: int, level_data: Dictionary)
 	# 标题行
 	var title_row = HBoxContainer.new()
 	var title_label = Label.new()
-	if I18nManager:
-		title_label.text = I18nManager.translate("ui.archive.level") + " %02d" % level_id
-	else:
-		title_label.text = "关卡 %02d" % level_id
+	title_label.text = I18nManager.translate("ui.archive.level") + " %02d" % level_id
 	title_label.add_theme_font_size_override("font_size", 20)
 	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	
 	var grade_label = Label.new()
-	var default_grade = "未完成"
-	if I18nManager:
-		default_grade = I18nManager.translate("ui.level_card.not_completed")
+	var default_grade = I18nManager.translate("ui.level_card.not_completed")
 	grade_label.text = level_data.get("grade", default_grade)
 	grade_label.add_theme_font_size_override("font_size", 18)
 	grade_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
@@ -151,10 +137,7 @@ func _create_level_entry(parent: Control, level_id: int, level_data: Dictionary)
 	
 	# 最佳因果链
 	var chain_label = Label.new()
-	if I18nManager:
-		chain_label.text = I18nManager.translate("ui.archive.best_chain")
-	else:
-		chain_label.text = "最佳因果链："
+	chain_label.text = I18nManager.translate("ui.archive.best_chain")
 	chain_label.add_theme_font_size_override("font_size", 14)
 	vbox.add_child(chain_label)
 	
@@ -173,11 +156,8 @@ func _create_level_entry(parent: Control, level_id: int, level_data: Dictionary)
 	var discovered_paths = SaveGame.get_discovered_paths(level_id)
 	if not discovered_paths.is_empty():
 		var paths_label = Label.new()
-		if I18nManager:
-			var separator = "、" if I18nManager.get_current_language() == "zh_CN" else ", "
-			paths_label.text = I18nManager.translate("ui.archive.discovered_paths") + separator.join(discovered_paths)
-		else:
-			paths_label.text = "发现的路径：" + "、".join(discovered_paths)
+		var separator = "、" if I18nManager.get_current_language() == "zh_CN" else ", "
+		paths_label.text = I18nManager.translate("ui.archive.discovered_paths") + separator.join(discovered_paths)
 		paths_label.add_theme_font_size_override("font_size", 12)
 		paths_label.modulate = Color(0.8, 0.8, 1.0)
 		vbox.add_child(paths_label)
@@ -187,21 +167,12 @@ func _create_level_entry(parent: Control, level_id: int, level_data: Dictionary)
 	var completed_time = level_data.get("completed_time", 0)
 	if completed_time > 0:
 		var time_dict = Time.get_datetime_dict_from_unix_time(completed_time)
-		if I18nManager:
-			time_label.text = I18nManager.translate("ui.archive.completed_time") + "%04d-%02d-%02d %02d:%02d" % [
-				time_dict.year, time_dict.month, time_dict.day,
-				time_dict.hour, time_dict.minute
-			]
-		else:
-			time_label.text = "完成时间：%04d-%02d-%02d %02d:%02d" % [
-				time_dict.year, time_dict.month, time_dict.day,
-				time_dict.hour, time_dict.minute
-			]
+		time_label.text = I18nManager.translate("ui.archive.completed_time") + "%04d-%02d-%02d %02d:%02d" % [
+			time_dict.year, time_dict.month, time_dict.day,
+			time_dict.hour, time_dict.minute
+		]
 	else:
-		if I18nManager:
-			time_label.text = I18nManager.translate("ui.archive.completed_time") + I18nManager.translate("ui.archive.unknown_time")
-		else:
-			time_label.text = "完成时间：未知"
+		time_label.text = I18nManager.translate("ui.archive.completed_time") + I18nManager.translate("ui.archive.unknown_time")
 	time_label.add_theme_font_size_override("font_size", 12)
 	time_label.modulate = Color(0.7, 0.7, 0.7)
 	vbox.add_child(time_label)
@@ -257,10 +228,7 @@ func _load_resonances_tab():
 	
 	if unlocked_ids.is_empty():
 		var empty_label = Label.new()
-		if I18nManager:
-			empty_label.text = I18nManager.translate("ui.archive.no_resonances")
-		else:
-			empty_label.text = "暂无解锁的共振模式"
+		empty_label.text = I18nManager.translate("ui.archive.no_resonances")
 		empty_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		vbox.add_child(empty_label)
 		return
@@ -295,10 +263,7 @@ func _create_resonance_entry(parent: Control, pattern: ResonanceDatabase.Resonan
 	
 	# 加成信息
 	var bonus_label = Label.new()
-	if I18nManager:
-		bonus_label.text = I18nManager.translate("ui.archive.bonus_multiplier", {"value": "%.1f" % pattern.bonus_multiplier})
-	else:
-		bonus_label.text = "加成倍数：%.1fx" % pattern.bonus_multiplier
+	bonus_label.text = I18nManager.translate("ui.archive.bonus_multiplier", {"value": "%.1f" % pattern.bonus_multiplier})
 	bonus_label.add_theme_font_size_override("font_size", 12)
 	bonus_label.modulate = Color(0.7, 0.9, 0.7)
 	vbox.add_child(bonus_label)
@@ -331,10 +296,7 @@ func _load_world_logs_tab():
 	
 	if logs.is_empty():
 		var empty_label = Label.new()
-		if I18nManager:
-			empty_label.text = I18nManager.translate("ui.archive.no_logs")
-		else:
-			empty_label.text = "暂无世界线日志"
+		empty_label.text = I18nManager.translate("ui.archive.no_logs")
 		empty_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		vbox.add_child(empty_label)
 		return
@@ -355,10 +317,7 @@ func _create_world_log_entry(parent: Control, log_entry: Dictionary):
 	
 	# 关卡信息
 	var level_label = Label.new()
-	if I18nManager:
-		level_label.text = I18nManager.translate("ui.archive.level") + " %02d" % log_entry.get("level_id", 0)
-	else:
-		level_label.text = "关卡 %02d" % log_entry.get("level_id", 0)
+	level_label.text = I18nManager.translate("ui.archive.level") + " %02d" % log_entry.get("level_id", 0)
 	level_label.add_theme_font_size_override("font_size", 16)
 	vbox.add_child(level_label)
 	
@@ -380,10 +339,7 @@ func _create_world_log_entry(parent: Control, log_entry: Dictionary):
 			time_dict.hour, time_dict.minute
 		]
 	else:
-		if I18nManager:
-			time_label.text = I18nManager.translate("ui.archive.unknown_time")
-		else:
-			time_label.text = "时间未知"
+		time_label.text = I18nManager.translate("ui.archive.unknown_time")
 	time_label.add_theme_font_size_override("font_size", 12)
 	time_label.modulate = Color(0.7, 0.7, 0.7)
 	vbox.add_child(time_label)

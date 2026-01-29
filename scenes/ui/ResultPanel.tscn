@@ -1,52 +1,91 @@
-[gd_scene format=3 uid="uid://dnuuym2q0nl6w"]
+[gd_scene load_steps=4 format=3 uid="uid://dnuuym2q0nl6w"]
 
 [ext_resource type="Script" uid="uid://cdpaefm3offbr" path="res://scripts/ui/ResultPanel.gd" id="1_8p5o2"]
+[ext_resource type="Script" path="res://addons/GameGUI/GGVBox.gd" id="2_ggvbox"]
+[ext_resource type="Script" path="res://addons/GameGUI/GGHBox.gd" id="3_gghbox"]
 
-[node name="Root" type="Control" unique_id=1110254083]
-visible = false
-layout_mode = 3
+[node name="ResultPanel" type="Panel" unique_id=1059048824]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_8p5o2")
+
+[node name="VBox" type="VBoxContainer" parent="." unique_id=835584557]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 16
+alignment = 1
+script = ExtResource("2_ggvbox")
 
-[node name="ResultPanel" type="Panel" parent="." unique_id=1059048824]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-script = ExtResource("1_8p5o2")
-
-[node name="VBox" type="VBoxContainer" parent="ResultPanel" unique_id=835584557]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="GradeLabel" type="Label" parent="ResultPanel/VBox" unique_id=337068628]
+[node name="GradeLabel" type="Label" parent="VBox" unique_id=337068628]
 layout_mode = 2
+theme_override_font_sizes/font_size = 48
+horizontal_alignment = 1
 
-[node name="CompletenessBar" type="ProgressBar" parent="ResultPanel/VBox" unique_id=1515760706]
+[node name="CompletenessLabel" type="Label" parent="VBox"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "完整度"
 
-[node name="StrengthBar" type="ProgressBar" parent="ResultPanel/VBox" unique_id=123274643]
+[node name="CompletenessBar" type="ProgressBar" parent="VBox" unique_id=1515760706]
 layout_mode = 2
+custom_minimum_size = Vector2(0, 20)
+show_percentage = false
 
-[node name="CleanlinessBar" type="ProgressBar" parent="ResultPanel/VBox" unique_id=735893524]
+[node name="StrengthBarLabel" type="Label" parent="VBox"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "因果强度"
 
-[node name="CommentLabel" type="Label" parent="ResultPanel/VBox" unique_id=1135676558]
+[node name="StrengthBar" type="ProgressBar" parent="VBox" unique_id=123274643]
 layout_mode = 2
+custom_minimum_size = Vector2(0, 20)
+show_percentage = false
 
-[node name="UnlockLabel" type="Label" parent="ResultPanel/VBox" unique_id=1569018122]
+[node name="CleanlinessLabel" type="Label" parent="VBox"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "洁净度"
 
-[node name="Buttons" type="HBoxContainer" parent="ResultPanel/VBox" unique_id=1716683023]
+[node name="CleanlinessBar" type="ProgressBar" parent="VBox" unique_id=735893524]
 layout_mode = 2
+custom_minimum_size = Vector2(0, 20)
+show_percentage = false
 
-[node name="NextButton" type="Button" parent="ResultPanel/VBox/Buttons" unique_id=1807278537]
+[node name="CommentLabel" type="Label" parent="VBox" unique_id=1135676558]
 layout_mode = 2
+autowrap_mode = 3
+horizontal_alignment = 1
+
+[node name="UnlockLabel" type="Label" parent="VBox" unique_id=1569018122]
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="Buttons" type="HBoxContainer" parent="VBox" unique_id=1716683023]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="NextButton" type="Button" parent="VBox/Buttons" unique_id=1807278537]
+layout_mode = 2
+custom_minimum_size = Vector2(100, 44)
 text = "下一关"
 
-[node name="RetryButton" type="Button" parent="ResultPanel/VBox/Buttons" unique_id=1753342064]
+[node name="RetryButton" type="Button" parent="VBox/Buttons" unique_id=1753342064]
 layout_mode = 2
-text = "重新挑战"
+custom_minimum_size = Vector2(100, 44)
+text = "重试"
+
+[node name="ShareButton" type="Button" parent="VBox/Buttons"]
+layout_mode = 2
+custom_minimum_size = Vector2(100, 44)
+text = "分享"

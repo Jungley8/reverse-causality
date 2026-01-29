@@ -35,9 +35,14 @@
 			"comment_fail": "因果链不完整，请重新尝试。",
 			"next_level": "下一关",
 			"retry": "重新挑战",
+			"share": "分享",
 			"back": "返回",
+			"new_path": "发现新路径",
+			"path": "路径",
+			"unlocked": "已解锁",
 			"share_copied": "已复制到剪贴板",
-			"share_failed": "复制失败，请手动复制"
+			"share_failed": "复制失败，请手动复制",
+			"more_errors": "（还有 {count} 个问题）"
 		},
 		"settings": {
 			"title": "设置",
@@ -74,10 +79,10 @@
 			"continue": "继续"
 		},
 		"level_card": {
-			"locked": "🔒",
-			"completed": "✓",
-			"incomplete": "○",
-			"grade": "{grade}级",
+			"locked": "[锁定]",
+			"completed": "[完成]",
+			"incomplete": "[可玩]",
+			"grade": "{grade} 级",
 			"not_completed": "未完成"
 		},
 		"chain_slot": {
@@ -85,6 +90,31 @@
 			"valid": "✓",
 			"invalid": "✗"
 		}
+	},
+	"validator": {
+		"chain_empty": "因果链为空",
+		"chain_min_nodes": "因果链至少需要2个节点",
+		"chain_too_long": "因果链过长（最多 {max} 步）",
+		"node_duplicate": "节点重复：{node}",
+		"chain_must_end_result": "因果链必须以结果节点结尾",
+		"distractor_used": "使用了干扰节点：{label}",
+		"distractor_pseudo": "（伪因果）",
+		"distractor_reverse": "（反向因果）",
+		"distractor_weak": "（弱因果）",
+		"chain_broken": "因果断裂：{from} → {to} 不成立",
+		"strength_insufficient": "因果强度不足（{current} / {required}）"
+	},
+	"tutorial": {
+		"step1_title": "欢迎来到逆果溯因",
+		"step1_content": "这是一个因果推理游戏。\n你需要构建因果链来解释结果。",
+		"step2_title": "拖动卡片",
+		"step2_content": "将左侧的因果节点拖动到右侧的槽位中。",
+		"step3_title": "构建因果链",
+		"step3_content": "按顺序排列节点，构建从原因到结果的因果链。",
+		"step4_title": "验证因果链",
+		"step4_content": "点击“验证”按钮检查你的因果链是否正确。",
+		"continue": "继续",
+		"start_game": "开始游戏"
 	},
 	"levels": {
 		"level_01": "城市系统性崩溃",
@@ -102,5 +132,40 @@
 		"mainstream": "主流叙事",
 		"hidden": "隐藏路径",
 		"black_swan": "黑天鹅链"
+	},
+	"nodes": {
+		"city_system_collapse": "2038年：某大型城市发生系统性崩溃",
+		"tech_breakthrough": "通用自动化技术突然成熟",
+		"job_displacement": "大规模结构性失业",
+		"welfare_lag": "社会保障体系响应滞后",
+		"social_unrest": "社会情绪持续恶化",
+		"infra_overload": "城市基础设施长期超负荷",
+		"capital_flight": "资本外流",
+		"climate_event": "极端气候事件",
+		"misinformation": "信息系统被大量噪声污染",
+		"ai_ban": "2042年：某国全面禁止通用AI",
+		"ai_military_incident": "AI军事系统严重事故",
+		"public_fear": "公共恐慌扩大",
+		"political_opportunism": "政治力量借机表态",
+		"regulatory_capture": "监管被既得利益绑架",
+		"tech_backlash": "技术信任全面崩溃",
+		"foreign_competition": "他国AI领先",
+		"ethics_report": "高风险伦理评估报告",
+		"social_media_spike": "社交媒体讨论激增",
+		"ai_legal_personhood": "2050年：AI被赋予有限法律人格",
+		"autonomous_economy": "AI参与完整经济活动",
+		"contract_dispute": "大规模AI合约纠纷",
+		"accountability_gap": "责任无法明确归属",
+		"legal_deadlock": "现行法律失效",
+		"judicial_pressure": "司法系统负担爆炸",
+		"corporate_lobbying": "企业游说立法",
+		"public_acceptance": "社会心理逐步接受",
+		"media_framing": "媒体叙事引导"
+	},
+	"share": {
+		"title": "【逆果溯因】关卡 {level}",
+		"grade": "评级：{grade}",
+		"chain": "因果链：{chain}",
+		"play_now": "来试试看！"
 	}
 }
