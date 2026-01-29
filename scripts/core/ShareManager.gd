@@ -75,41 +75,23 @@ static func _get_chain_labels(level_id: int, chain: Array[String]) -> Array[Stri
 	
 	return labels
 
-## 复制文本到剪贴板（Web平台）
-static func copy_to_clipboard(text: String):
-	# 在Web平台使用JavaScript接口
+## 复制文本到剪贴板
+## 返回 true 表示已尝试写入剪贴板，false 表示未支持（如 Web 下无 JavaScriptBridge）
+static func copy_to_clipboard(text: String) -> bool:
 	if OS.get_name() == "Web":
-		# 使用JavaScript的navigator.clipboard API
-		var js_code = """
-		if (navigator.clipboard && navigator.clipboard.writeText) {
-			navigator.clipboard.writeText('%s').then(() => {
-				console.log('Text copied to clipboard');
-			}).catch(err => {
-				console.error('Failed to copy text:', err);
-			});
-		} else {
-			// 降级方案：使用execCommand
-			var textarea = document.createElement('textarea');
-			textarea.value = '%s';
-			textarea.style.position = 'fixed';
-			textarea.style.opacity = '0';
-			document.body.appendChild(textarea);
-			textarea.select();
-			document.execCommand('copy');
-			document.body.removeChild(textarea);
-		}
-		""" % [text, text]
-		
-		# 在Godot Web中执行JavaScript
-		# 注意：这需要在Web导出时启用JavaScript接口
-		# JavaScript.eval(js_code)
-		print("分享文本（Web平台需要JavaScript接口）：")
-		print(text)
+		if Engine.has_singleton("JavaScriptBridge"):
+			var bridge = Engine.get_singleton("JavaScriptBridge")
+			var escaped = text.replace("\\", "\\\\").replace("'", "\\'").replace("\n", "\\n").replace("\r", "\\r")
+			var js_code = "(function(){ var t = '" + escaped + "'; if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(t).catch(function(e){ console.error(e); }); } else { var ta = document.createElement('textarea'); ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); } })();"
+			bridge.eval(js_code, true)
+			return true
+		else:
+			print("分享文本（Web 未提供 JavaScriptBridge）：")
+			print(text)
+			return false
 	else:
-		# 其他平台可以使用OS.set_clipboard（如果可用）
-		print("分享文本：")
-		print(text)
-		# OS.set_clipboard(text)  # 如果Godot版本支持
+		DisplayServer.clipboard_set(text)
+		return true
 
 ## 生成分享图片（简化版：返回文本描述）
 ## 完整实现需要渲染到Image并保存

@@ -12,7 +12,7 @@ theme_override_constants/separation = 10
 
 [node name="LevelIdLabel" type="Label" parent="VBox" unique_id=1063982739]
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 26
 text = "01"
 horizontal_alignment = 1
 
@@ -24,12 +24,12 @@ horizontal_alignment = 1
 
 [node name="GradeLabel" type="Label" parent="VBox" unique_id=810932758]
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 20
 text = "未完成"
 horizontal_alignment = 1
 
 [node name="TitleLabel" type="Label" parent="VBox" unique_id=1945239080]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 18
 text = "关卡标题"
 horizontal_alignment = 1

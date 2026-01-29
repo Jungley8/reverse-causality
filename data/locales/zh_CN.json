@@ -35,7 +35,16 @@
 			"comment_fail": "因果链不完整，请重新尝试。",
 			"next_level": "下一关",
 			"retry": "重新挑战",
-			"back": "返回"
+			"back": "返回",
+			"share_copied": "已复制到剪贴板",
+			"share_failed": "复制失败，请手动复制"
+		},
+		"settings": {
+			"title": "设置",
+			"sound": "音效",
+			"music": "音乐",
+			"language": "语言",
+			"close": "关闭"
 		},
 		"archive": {
 			"title": "因果图鉴",

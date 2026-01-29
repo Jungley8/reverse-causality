@@ -49,42 +49,42 @@ func _setup_fonts(theme: Theme):
 	theme.set_font_size("font_size", "", 16)  # TypographySystem.FONT_SIZE_BODY
 
 func _setup_buttons(theme: Theme):
-	# Primary Button - 更亮的蓝色，更明显的效果
-	var btn_primary_normal = _create_button_style(Color("#58A6FF"), Color("#58A6FF"), 12, 2)
-	btn_primary_normal.shadow_color = Color(0, 0, 0, 0.2)
+	# Primary Button - 琥珀金强调（暖色主题）
+	var btn_primary_normal = _create_button_style(Color("#D4A84B"), Color("#B8923E"), 12, 2)
+	btn_primary_normal.shadow_color = Color(0, 0, 0, 0.25)
 	btn_primary_normal.shadow_size = 4
 	btn_primary_normal.shadow_offset = Vector2(0, 2)
 	
-	var btn_primary_hover = _create_button_style(Color("#79C0FF"), Color("#79C0FF"), 12, 2, _shadow_md())
-	btn_primary_hover.shadow_color = Color(88, 166, 255, 0.3)  # 蓝色光晕
+	var btn_primary_hover = _create_button_style(Color("#E6B84F"), Color("#D4A84B"), 12, 2, _shadow_md())
+	btn_primary_hover.shadow_color = Color(212, 168, 75, 0.35)
 	btn_primary_hover.shadow_size = 8
 	btn_primary_hover.shadow_offset = Vector2(0, 3)
 	
-	var btn_primary_pressed = _create_button_style(Color("#388BFD"), Color("#388BFD"), 12, 2)
-	btn_primary_pressed.shadow_color = Color(0, 0, 0, 0.15)
+	var btn_primary_pressed = _create_button_style(Color("#B8923E"), Color("#9E7A30"), 12, 2)
+	btn_primary_pressed.shadow_color = Color(0, 0, 0, 0.2)
 	btn_primary_pressed.shadow_size = 2
 	btn_primary_pressed.shadow_offset = Vector2(0, 1)
 	
-	var btn_primary_disabled = _create_button_style(Color("#161A23"), Color("#1C2128"), 12, 1)
+	var btn_primary_disabled = _create_button_style(Color("#1a1814"), Color("#3d3832"), 12, 1)
 	
 	theme.set_stylebox("normal", "ButtonPrimary", btn_primary_normal)
 	theme.set_stylebox("hover", "ButtonPrimary", btn_primary_hover)
 	theme.set_stylebox("pressed", "ButtonPrimary", btn_primary_pressed)
 	theme.set_stylebox("disabled", "ButtonPrimary", btn_primary_disabled)
 	
-	theme.set_color("font_color", "ButtonPrimary", Color("#0A0D12"))
-	theme.set_color("font_hover_color", "ButtonPrimary", Color.WHITE)
-	theme.set_color("font_pressed_color", "ButtonPrimary", Color("#0A0D12"))
-	theme.set_color("font_disabled_color", "ButtonPrimary", Color("#484F58"))
-	theme.set_font_size("font_size", "ButtonPrimary", 18)  # 更大字体
+	theme.set_color("font_color", "ButtonPrimary", Color("#181410"))
+	theme.set_color("font_hover_color", "ButtonPrimary", Color("#181410"))
+	theme.set_color("font_pressed_color", "ButtonPrimary", Color("#181410"))
+	theme.set_color("font_disabled_color", "ButtonPrimary", Color("#665a4a"))
+	theme.set_font_size("font_size", "ButtonPrimary", 20)
 	
-	# Secondary Button - 更明显的边框和悬停效果
-	var btn_secondary_normal = _create_button_style(Color("#161A23"), Color("#484F58"), 12, 2)
+	# Secondary Button - 暖灰边框
+	var btn_secondary_normal = _create_button_style(Color("#1a1814"), Color("#3d3832"), 12, 2)
 	btn_secondary_normal.shadow_color = Color(0, 0, 0, 0.15)
 	btn_secondary_normal.shadow_size = 3
 	btn_secondary_normal.shadow_offset = Vector2(0, 2)
 	
-	var btn_secondary_hover = _create_button_style(Color("#1E232E"), Color("#58A6FF"), 12, 2, _shadow_md())
+	var btn_secondary_hover = _create_button_style(Color("#242019"), Color("#7eb8e8"), 12, 2, _shadow_md())
 	btn_secondary_hover.shadow_color = Color(0, 0, 0, 0.25)
 	btn_secondary_hover.shadow_size = 6
 	btn_secondary_hover.shadow_offset = Vector2(0, 3)
@@ -94,84 +94,84 @@ func _setup_buttons(theme: Theme):
 	theme.set_stylebox("pressed", "ButtonSecondary", btn_secondary_normal)
 	theme.set_stylebox("disabled", "ButtonSecondary", btn_primary_disabled)
 	
-	theme.set_color("font_color", "ButtonSecondary", Color("#E6EDF3"))
-	theme.set_color("font_hover_color", "ButtonSecondary", Color.WHITE)
-	theme.set_font_size("font_size", "ButtonSecondary", 18)  # 更大字体
+	theme.set_color("font_color", "ButtonSecondary", Color("#f0ebe3"))
+	theme.set_color("font_hover_color", "ButtonSecondary", Color("#f0ebe3"))
+	theme.set_font_size("font_size", "ButtonSecondary", 18)
 	
 	# Default Button
 	theme.set_stylebox("normal", "Button", btn_secondary_normal)
 	theme.set_stylebox("hover", "Button", btn_secondary_hover)
 	theme.set_stylebox("pressed", "Button", btn_secondary_normal)
 	theme.set_stylebox("disabled", "Button", btn_primary_disabled)
-	theme.set_color("font_color", "Button", Color("#E6EDF3"))
+	theme.set_color("font_color", "Button", Color("#f0ebe3"))
 	theme.set_font_size("font_size", "Button", 18)
 
 func _setup_labels(theme: Theme):
-	theme.set_color("font_color", "Label", Color("#E6EDF3"))
-	theme.set_font_size("font_size", "Label", 16)
-	theme.set_color("font_color", "LabelH1", Color("#E6EDF3"))
-	theme.set_font_size("font_size", "LabelH1", 32)
-	theme.set_color("font_color", "LabelH2", Color("#E6EDF3"))
-	theme.set_font_size("font_size", "LabelH2", 24)
-	theme.set_color("font_color", "LabelSecondary", Color("#9EA7B3"))
-	theme.set_font_size("font_size", "LabelSecondary", 14)
-	theme.set_color("font_color", "LabelCaption", Color("#6E7781"))
-	theme.set_font_size("font_size", "LabelCaption", 12)
+	theme.set_color("font_color", "Label", Color("#f0ebe3"))
+	theme.set_font_size("font_size", "Label", 17)
+	theme.set_color("font_color", "LabelH1", Color("#f0ebe3"))
+	theme.set_font_size("font_size", "LabelH1", 34)
+	theme.set_color("font_color", "LabelH2", Color("#f0ebe3"))
+	theme.set_font_size("font_size", "LabelH2", 26)
+	theme.set_color("font_color", "LabelSecondary", Color("#9c958a"))
+	theme.set_font_size("font_size", "LabelSecondary", 15)
+	theme.set_color("font_color", "LabelCaption", Color("#9c958a"))
+	theme.set_font_size("font_size", "LabelCaption", 13)
 
 func _setup_panels(theme: Theme):
-	# PanelContainer - 卡片容器，更明显的阴影和边框
-	var panel_card = _create_panel_style(Color("#161A23"), Color("#484F58"), 10, 2, _shadow_md())
-	panel_card.shadow_color = Color(0, 0, 0, 0.3)
+	# PanelContainer
+	var panel_card = _create_panel_style(Color("#1a1814"), Color("#3d3832"), 10, 2, _shadow_md())
+	panel_card.shadow_color = Color(0, 0, 0, 0.25)
 	panel_card.shadow_size = 6
 	panel_card.shadow_offset = Vector2(0, 3)
 	theme.set_stylebox("panel", "PanelContainer", panel_card)
 	
-	# Panel - 基础面板
-	var panel_base = _create_panel_style(Color("#0E1117"), Color("#2D3139"), 8, 1)
-	panel_base.shadow_color = Color(0, 0, 0, 0.1)
+	# Panel - 基础面板（暖灰）
+	var panel_base = _create_panel_style(Color("#141210"), Color("#3d3832"), 8, 1)
+	panel_base.shadow_color = Color(0, 0, 0, 0.15)
 	panel_base.shadow_size = 2
 	panel_base.shadow_offset = Vector2(0, 1)
 	theme.set_stylebox("panel", "Panel", panel_base)
 	
-	# PanelElevated - 抬升面板，更强的阴影
-	var panel_elevated = _create_panel_style(Color("#1E232E"), Color("#58A6FF"), 12, 2, _shadow_md())
-	panel_elevated.shadow_color = Color(0, 0, 0, 0.4)
-	panel_elevated.shadow_size = 10
+	# PanelElevated - 抬升区域（因果链/候选区）
+	var panel_elevated = _create_panel_style(Color("#242019"), Color("#624736"), 12, 2, _shadow_md())
+	panel_elevated.shadow_color = Color(0, 0, 0, 0.3)
+	panel_elevated.shadow_size = 8
 	panel_elevated.shadow_offset = Vector2(0, 4)
 	theme.set_stylebox("panel", "PanelElevated", panel_elevated)
 
 func _setup_progress_bars(theme: Theme):
 	var progress_bg = StyleBoxFlat.new()
-	progress_bg.bg_color = Color("#0E1117")
-	progress_bg.corner_radius_top_left = 4
-	progress_bg.corner_radius_top_right = 4
-	progress_bg.corner_radius_bottom_left = 4
-	progress_bg.corner_radius_bottom_right = 4
+	progress_bg.bg_color = Color("#242019")
+	progress_bg.corner_radius_top_left = 6
+	progress_bg.corner_radius_top_right = 6
+	progress_bg.corner_radius_bottom_left = 6
+	progress_bg.corner_radius_bottom_right = 6
 	progress_bg.border_width_left = 1
 	progress_bg.border_width_top = 1
 	progress_bg.border_width_right = 1
 	progress_bg.border_width_bottom = 1
-	progress_bg.border_color = Color("#1C2128")
+	progress_bg.border_color = Color("#3d3832")
 	
 	var progress_fill = StyleBoxFlat.new()
-	progress_fill.bg_color = Color("#3FB950")
-	progress_fill.corner_radius_top_left = 4
-	progress_fill.corner_radius_top_right = 4
-	progress_fill.corner_radius_bottom_left = 4
-	progress_fill.corner_radius_bottom_right = 4
+	progress_fill.bg_color = Color("#D4A84B")
+	progress_fill.corner_radius_top_left = 6
+	progress_fill.corner_radius_top_right = 6
+	progress_fill.corner_radius_bottom_left = 6
+	progress_fill.corner_radius_bottom_right = 6
 	
 	theme.set_stylebox("background", "ProgressBar", progress_bg)
 	theme.set_stylebox("fill", "ProgressBar", progress_fill)
-	theme.set_color("font_color", "ProgressBar", Color.WHITE)
-	theme.set_font_size("font_size", "ProgressBar", 14)
+	theme.set_color("font_color", "ProgressBar", Color("#f0ebe3"))
+	theme.set_font_size("font_size", "ProgressBar", 15)
 
 func _setup_line_edits(theme: Theme):
-	var line_edit_normal = _create_panel_style(Color("#0E1117"), Color("#2D3139"), 4, 1)
-	var line_edit_focus = _create_panel_style(Color("#161A23"), Color("#58A6FF"), 4, 2)
+	var line_edit_normal = _create_panel_style(Color("#141210"), Color("#3d3832"), 4, 1)
+	var line_edit_focus = _create_panel_style(Color("#242019"), Color("#7eb8e8"), 4, 2)
 	theme.set_stylebox("normal", "LineEdit", line_edit_normal)
 	theme.set_stylebox("focus", "LineEdit", line_edit_focus)
-	theme.set_color("font_color", "LineEdit", Color("#E6EDF3"))
-	theme.set_color("font_placeholder_color", "LineEdit", Color("#6E7781"))
+	theme.set_color("font_color", "LineEdit", Color("#f0ebe3"))
+	theme.set_color("font_placeholder_color", "LineEdit", Color("#9c958a"))
 
 func _create_button_style(bg_color: Color, border_color: Color, corner_radius: int = 8, border_width: int = 1, shadow: Dictionary = {}) -> StyleBoxFlat:
 	var style = StyleBoxFlat.new()

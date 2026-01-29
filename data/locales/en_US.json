@@ -35,7 +35,16 @@
 			"comment_fail": "Causal chain incomplete, please try again.",
 			"next_level": "Next Level",
 			"retry": "Retry",
-			"back": "Back"
+			"back": "Back",
+			"share_copied": "Copied to clipboard",
+			"share_failed": "Copy failed, please copy manually"
+		},
+		"settings": {
+			"title": "Settings",
+			"sound": "Sound",
+			"music": "Music",
+			"language": "Language",
+			"close": "Close"
 		},
 		"archive": {
 			"title": "Archive",

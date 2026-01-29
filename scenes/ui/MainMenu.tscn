@@ -18,7 +18,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.05490196, 0.06666667, 0.09019608, 1)
+color = Color(0.0588235, 0.054902, 0.0470588, 1)
 
 [node name="TitleContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -37,13 +37,13 @@ alignment = 1
 
 [node name="GameTitle" type="Label" parent="TitleContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 48
+theme_override_font_sizes/font_size = 52
 text = "逆果溯因"
 horizontal_alignment = 1
 
 [node name="Subtitle" type="Label" parent="TitleContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 26
 text = "REVERSE CAUSALITY"
 horizontal_alignment = 1
 
@@ -64,17 +64,17 @@ alignment = 1
 
 [node name="StartButton" type="Button" parent="MenuButtons"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 22
 text = "开始游戏"
 
 [node name="ContinueButton" type="Button" parent="MenuButtons"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 22
 text = "继续游戏"
 
 [node name="ArchiveButton" type="Button" parent="MenuButtons"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 22
 text = "因果图鉴"
 
 [node name="VersionLabel" type="Label" parent="."]

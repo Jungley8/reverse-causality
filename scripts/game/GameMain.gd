@@ -19,6 +19,8 @@ var is_undoing_redoing: bool = false  # 标记是否正在执行撤销/重做，
 @onready var clear_button = $ActionButtons/ClearButton
 @onready var result_panel = $ResultPanel
 @onready var error_toast = $ErrorToast
+@onready var settings_button = $Header/SettingsButton
+@onready var settings_panel = $SettingsPanel
 
 func _ready():
 	# 初始化并应用主题
@@ -29,7 +31,15 @@ func _ready():
 	var background = get_node_or_null("Background")
 	if background and background is ColorRect:
 		background.color = ThemeManager.get_color("background")
-	
+	# 因果链区、候选区使用抬升面板样式
+	if chain_area:
+		chain_area.theme_type_variation = "PanelElevated"
+	var candidate_area = get_node_or_null("CandidateArea")
+	if candidate_area:
+		candidate_area.theme_type_variation = "PanelElevated"
+	var settings_close = get_node_or_null("SettingsPanel/VBox/CloseButton")
+	if settings_close:
+		settings_close.theme_type_variation = "ButtonSecondary"
 	# 为按钮设置主题类型
 	if validate_button:
 		validate_button.theme_type_variation = "ButtonPrimary"
@@ -44,9 +54,11 @@ func _ready():
 	if strength_label:
 		strength_label.theme_type_variation = "LabelSecondary"
 	
+	if settings_panel:
+		settings_panel.visible = false
+		_refresh_settings_ui()
 	# 清空历史记录（新关卡开始）
 	UndoRedoManager.clear()
-	
 	# 从 GameManager 获取当前关卡
 	if GameManager.current_level:
 		current_level = GameManager.current_level
@@ -168,6 +180,21 @@ func _create_chain_slots():
 func _connect_signals():
 	validate_button.pressed.connect(_on_validate_pressed)
 	clear_button.pressed.connect(_on_clear_pressed)
+	if settings_button:
+		settings_button.pressed.connect(_on_settings_pressed)
+	if settings_panel:
+		var close_btn = settings_panel.get_node_or_null("VBox/CloseButton")
+		if close_btn:
+			close_btn.pressed.connect(_on_settings_close)
+		var sound_slider = settings_panel.get_node_or_null("VBox/SoundSlider")
+		if sound_slider:
+			sound_slider.value_changed.connect(_on_sound_changed)
+		var music_slider = settings_panel.get_node_or_null("VBox/MusicSlider")
+		if music_slider:
+			music_slider.value_changed.connect(_on_music_changed)
+		var lang_option = settings_panel.get_node_or_null("VBox/LanguageOption")
+		if lang_option:
+			lang_option.item_selected.connect(_on_language_selected)
 
 func _on_card_drag_started(card: CauseCard):
 	current_dragging_card = card
@@ -262,15 +289,14 @@ func _update_strength_bar():
 		else:
 			strength_label.text = "%.1f / %.1f" % [strength, current_level.required_strength]
 		
-		# 根据强度设置颜色反馈
+		# 根据强度设置颜色反馈（暖色系）
 		var color: Color
 		if ratio >= 90.0:
-			color = Color(0.2, 1.0, 0.2)  # 绿色（接近阈值）
+			color = ThemeManager.get_color("success")
 		elif ratio >= 70.0:
-			color = Color(1.0, 1.0, 0.2)  # 黄色
+			color = ThemeManager.get_color("warning")
 		else:
-			color = Color(1.0, 0.4, 0.4)  # 红色（不足）
-		
+			color = ThemeManager.get_color("danger")
 		tween.parallel().tween_property(strength_bar, "modulate", color, 0.3)
 	else:
 		strength_bar.value = 0.0
@@ -356,6 +382,8 @@ func _on_validate_pressed():
 		result_panel.next_level_pressed.connect(_on_result_next_level)
 	if not result_panel.retry_pressed.is_connected(_on_result_retry):
 		result_panel.retry_pressed.connect(_on_result_retry)
+	if not result_panel.share_done.is_connected(_on_share_done):
+		result_panel.share_done.connect(_on_share_done)
 
 func _on_result_next_level():
 	# 加载下一关
@@ -387,6 +415,71 @@ func _show_error(message: String):
 	print("错误：", message)
 	if error_toast:
 		error_toast.show_error(message)
+
+func _on_share_done(success: bool):
+	if not error_toast:
+		return
+	if success:
+		error_toast.show_success(I18nManager.translate("ui.result_panel.share_copied") if I18nManager else "已复制到剪贴板")
+	else:
+		error_toast.show_error(I18nManager.translate("ui.result_panel.share_failed") if I18nManager else "复制失败，请手动复制")
+
+func _on_settings_pressed():
+	if settings_panel:
+		_refresh_settings_ui()
+		settings_panel.visible = true
+
+func _on_settings_close():
+	if settings_panel:
+		settings_panel.visible = false
+
+func _refresh_settings_ui():
+	if not settings_panel:
+		return
+	if I18nManager:
+		var title = settings_panel.get_node_or_null("VBox/TitleLabel")
+		if title: title.text = I18nManager.translate("ui.settings.title")
+		var sl = settings_panel.get_node_or_null("VBox/SoundLabel")
+		if sl: sl.text = I18nManager.translate("ui.settings.sound")
+		var ml = settings_panel.get_node_or_null("VBox/MusicLabel")
+		if ml: ml.text = I18nManager.translate("ui.settings.music")
+		var ll = settings_panel.get_node_or_null("VBox/LanguageLabel")
+		if ll: ll.text = I18nManager.translate("ui.settings.language")
+		var close_btn = settings_panel.get_node_or_null("VBox/CloseButton")
+		if close_btn: close_btn.text = I18nManager.translate("ui.settings.close")
+	var settings = SaveGame.save_data.get("settings", {})
+	var sound_slider = settings_panel.get_node_or_null("VBox/SoundSlider")
+	if sound_slider:
+		sound_slider.value = (settings.get("sound_volume", 1.0) * 100.0)
+	var music_slider = settings_panel.get_node_or_null("VBox/MusicSlider")
+	if music_slider:
+		music_slider.value = (settings.get("music_volume", 0.7) * 100.0)
+	var lang_option = settings_panel.get_node_or_null("VBox/LanguageOption")
+	if lang_option and I18nManager:
+		lang_option.clear()
+		var langs = I18nManager.get_available_languages()
+		for lang in langs:
+			lang_option.add_item(I18nManager.get_language_display_name(lang))
+		var cur = I18nManager.get_current_language()
+		var idx = langs.find(cur)
+		if idx >= 0:
+			lang_option.selected = idx
+
+func _on_sound_changed(value: float):
+	if AudioManager:
+		AudioManager.set_sfx_volume(value / 100.0)
+
+func _on_music_changed(value: float):
+	if AudioManager:
+		AudioManager.set_music_volume(value / 100.0)
+
+func _on_language_selected(index: int):
+	if I18nManager:
+		var langs = I18nManager.get_available_languages()
+		if index >= 0 and index < langs.size():
+			I18nManager.set_language(langs[index])
+			_setup_level()
+			_refresh_settings_ui()
 
 func _input(event: InputEvent):
 	# 处理撤销/重做快捷键

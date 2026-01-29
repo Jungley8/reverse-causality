@@ -32,7 +32,7 @@ func _setup_visuals():
 	if label:
 		label.text = cause_data.label
 		label.add_theme_color_override("font_color", ThemeManager.get_color("text_primary"))
-		label.add_theme_font_size_override("font_size", 18)  # 更大的字体
+		label.add_theme_font_size_override("font_size", 22)
 
 func _on_mouse_entered():
 	if not is_used and not is_dragging:
@@ -51,27 +51,21 @@ func _apply_hover_effect():
 	# 更新样式
 	if cause_data:
 		var hover_style = ThemeManager.create_card_style(cause_data.is_distractor)
-		hover_style.bg_color = Color("#1E232E")  # CARD_BG_HOVER
+		hover_style.bg_color = Color("#242019")
 		if cause_data.is_distractor:
-			hover_style.border_color = Color("#F85149")  # 危险色
+			hover_style.border_color = Color("#c94a4a")
 		else:
-			hover_style.border_color = Color("#58A6FF")  # 蓝色强调
+			hover_style.border_color = Color("#d4a84b")
 		hover_style.border_width_left = 3
 		hover_style.border_width_top = 3
 		hover_style.border_width_right = 3
 		hover_style.border_width_bottom = 3
-		
-		# 添加更明显的光晕
-		var shadow = _shadow_md()
 		if not cause_data.is_distractor:
-			# 蓝色光晕
-			hover_style.shadow_color = Color(88, 166, 255, 0.4)
+			hover_style.shadow_color = Color(212, 168, 75, 0.35)
 		else:
-			# 红色光晕
-			hover_style.shadow_color = Color(248, 81, 73, 0.4)
-		hover_style.shadow_size = 12
-		hover_style.shadow_offset = Vector2(0, 4)
-		
+			hover_style.shadow_color = Color(201, 74, 74, 0.35)
+		hover_style.shadow_size = 10
+		hover_style.shadow_offset = Vector2(0, 3)
 		add_theme_stylebox_override("panel", hover_style)
 
 func _shadow_md() -> Dictionary:

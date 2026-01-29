@@ -41,12 +41,10 @@ static func apply_theme_to_scene(scene: Node):
 
 static func _apply_recursive(node: Node):
 	if node is Control:
-		# 强制应用主题（即使已有主题也覆盖，确保一致性）
 		node.theme = current_theme
-		# 如果是根节点，也设置背景色
 		if node.get_parent() == null or not (node.get_parent() is Control):
 			if node.has_method("set_background_color"):
-				node.set_background_color(Color("#0A0D12"))  # 最深背景
+				node.set_background_color(Color("#0f0e0c"))
 	
 	for child in node.get_children():
 		_apply_recursive(child)
@@ -57,21 +55,24 @@ static func get_color(color_name: String) -> Color:
 	# 直接使用后备颜色值（避免 ColorPalette 类加载问题）
 	return _get_color_direct(color_name)
 
-# 直接颜色值（避免依赖 ColorPalette 类）
+# 直接颜色值（暖色深色主题，参考经典卡牌/策略游戏）
 static func _get_color_direct(color_name: String) -> Color:
 	match color_name:
-		"background": return Color("#0A0D12")
-		"surface": return Color("#0E1117")
-		"text_primary": return Color("#E6EDF3")
-		"primary_text": return Color("#E6EDF3")
-		"secondary_text": return Color("#9EA7B3")
-		"causal_strong": return Color("#3FB950")
-		"causal_weak": return Color("#D29922")
-		"error": return Color("#F85149")
-		"success": return Color("#3FB950")
-		"warning": return Color("#D29922")
-		"danger": return Color("#F85149")
-		"info": return Color("#58A6FF")
+		"background": return Color("#0f0e0c")      # 暖黑底
+		"surface": return Color("#1a1814")           # 面板底
+		"surface_raised": return Color("#242019")   # 抬升区域（因果链区）
+		"text_primary": return Color("#faf6f0")     # 高对比主字，便于中文阅读
+		"primary_text": return Color("#faf6f0")
+		"secondary_text": return Color("#b8b0a4")    # 次要字略提亮
+		"accent": return Color("#d4a84b")           # 琥珀金强调
+		"accent_dim": return Color("#b8923e")
+		"causal_strong": return Color("#4a9c5c")   # 暖绿
+		"causal_weak": return Color("#c9a227")
+		"error": return Color("#c94a4a")
+		"success": return Color("#4a9c5c")
+		"warning": return Color("#c9a227")
+		"danger": return Color("#c94a4a")
+		"info": return Color("#7eb8e8")             # 柔和蓝
 		_:
 			push_warning("未知颜色名称：", color_name)
 			return Color.WHITE
@@ -104,12 +105,11 @@ static func create_card_style(is_distractor: bool = false) -> StyleBoxFlat:
 	var style = StyleBoxFlat.new()
 	
 	if is_distractor:
-		style.bg_color = Color("#1A1212")  # 更明显的红色调
-		style.border_color = Color("#F85149")  # 危险色边框
+		style.bg_color = Color("#1e1616")
+		style.border_color = Color("#c94a4a")
 	else:
-		# 使用更明显的颜色和边框
-		style.bg_color = Color("#161A23")  # CARD_BG_NORMAL
-		style.border_color = Color("#484F58")  # 更亮的边框
+		style.bg_color = Color("#1a1814")
+		style.border_color = Color("#3d3832")
 	
 	# 更粗的边框
 	style.border_width_left = 2
@@ -140,28 +140,26 @@ static func create_slot_style(state: String = "empty") -> StyleBoxFlat:
 	var border_width = 2  # 默认更粗的边框
 	match state:
 		"empty":
-			style.bg_color = Color("#0E1117")  # SLOT_BG_EMPTY
-			style.border_color = Color("#484F58")  # 更亮的边框
-			style.draw_center = false  # 空槽只显示边框
+			style.bg_color = Color("#141210")
+			style.border_color = Color("#3d3832")
+			style.draw_center = false
 			border_width = 2
 		"filled":
-			style.bg_color = Color("#161A23")  # CARD_BG_NORMAL
-			style.border_color = Color("#58A6FF")  # 蓝色边框表示已填充
+			style.bg_color = Color("#242019")
+			style.border_color = Color("#7eb8e8")
 			border_width = 3
 		"hover_valid":
-			style.bg_color = Color("#1C4D2B")  # SLOT_BG_VALID
-			style.border_color = Color("#3FB950")  # SLOT_BORDER_VALID
+			style.bg_color = Color("#1a2e1e")
+			style.border_color = Color("#4a9c5c")
 			border_width = 3
-			# 添加绿色光晕
-			style.shadow_color = Color(63, 185, 80, 0.4)
+			style.shadow_color = Color(74, 156, 92, 0.35)
 			style.shadow_size = 8
 			style.shadow_offset = Vector2(0, 0)
 		"hover_invalid":
-			style.bg_color = Color("#4A1C18")  # SLOT_BG_INVALID
-			style.border_color = Color("#F85149")  # SLOT_BORDER_INVALID
+			style.bg_color = Color("#2e1a1a")
+			style.border_color = Color("#c94a4a")
 			border_width = 3
-			# 添加红色光晕
-			style.shadow_color = Color(248, 81, 73, 0.4)
+			style.shadow_color = Color(201, 74, 74, 0.35)
 			style.shadow_size = 8
 			style.shadow_offset = Vector2(0, 0)
 	

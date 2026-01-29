@@ -5,6 +5,7 @@ extends Panel
 
 signal next_level_pressed
 signal retry_pressed
+signal share_done(success: bool)
 
 var current_result: Dictionary = {}
 var current_grade: String = ""
@@ -34,10 +35,13 @@ func _ready():
 		share_button.theme_type_variation = "ButtonSecondary"
 	if grade_label:
 		grade_label.theme_type_variation = "LabelH1"
+		grade_label.add_theme_font_size_override("font_size", 40)
 	if comment_label:
 		comment_label.theme_type_variation = "LabelSecondary"
+		comment_label.add_theme_font_size_override("font_size", 19)
 	if unlock_label:
 		unlock_label.theme_type_variation = "LabelSecondary"
+		unlock_label.add_theme_font_size_override("font_size", 18)
 	
 	visible = false
 	next_button.pressed.connect(_on_next_pressed)
@@ -201,17 +205,11 @@ func _on_retry_pressed():
 func _on_share_pressed():
 	if current_chain.is_empty():
 		return
-	
-	# 生成分享文本
 	var share_text = ShareManager.generate_share_text(
 		GameManager.current_level_id,
 		current_chain,
 		current_grade,
 		current_result
 	)
-	
-	# 复制到剪贴板
-	ShareManager.copy_to_clipboard(share_text)
-	
-	# 显示提示（可以扩展为Toast提示）
-	print("分享内容已复制到剪贴板")
+	var success = ShareManager.copy_to_clipboard(share_text)
+	share_done.emit(success)
