@@ -32,9 +32,9 @@ func _get_state_name() -> String:
 		_: return "empty"
 
 func _update_visual():
+	# 使用新 UI 系统
 	var state_name = _get_state_name()
-	var style = ThemeManager.create_slot_style(state_name)
-	add_theme_stylebox_override("panel", style)
+	add_theme_stylebox_override("panel", UIStyles.slot(state_name))
 	
 	# 更新占位符
 	match current_state:
@@ -42,36 +42,24 @@ func _update_visual():
 			modulate = Color.WHITE
 			if placeholder_label:
 				placeholder_label.visible = true
-				if I18nManager:
-					placeholder_label.text = I18nManager.translate("ui.chain_slot.placeholder")
-				else:
-					placeholder_label.text = "?"
-				placeholder_label.add_theme_color_override("font_color", ThemeManager.get_color("text_primary"))
-				placeholder_label.add_theme_font_size_override("font_size", 56)  # 更大的占位符字体
+				placeholder_label.text = I18nManager.translate("ui.chain_slot.placeholder") if I18nManager else "?"
+				UIFonts.apply_to_label(placeholder_label, "display", UITokens.COLOR.TEXT_SECONDARY)
 		State.FILLED:
 			modulate = Color.WHITE
 			if placeholder_label:
 				placeholder_label.visible = false
 		State.HOVER_VALID:
-			modulate = Color(1.1, 1.1, 1.0)
+			modulate = Color.WHITE
 			if placeholder_label:
 				placeholder_label.visible = true
-				if I18nManager:
-					placeholder_label.text = I18nManager.translate("ui.chain_slot.valid")
-				else:
-					placeholder_label.text = "✓"
-				placeholder_label.add_theme_color_override("font_color", ThemeManager.get_color("success"))
-				placeholder_label.add_theme_font_size_override("font_size", 56)  # 更大的占位符字体
+				placeholder_label.text = I18nManager.translate("ui.chain_slot.valid") if I18nManager else "✓"
+				UIFonts.apply_to_label(placeholder_label, "display", UITokens.COLOR.SUCCESS)
 		State.HOVER_INVALID:
-			modulate = Color(1.0, 0.9, 0.9)
+			modulate = Color.WHITE
 			if placeholder_label:
 				placeholder_label.visible = true
-				if I18nManager:
-					placeholder_label.text = I18nManager.translate("ui.chain_slot.invalid")
-				else:
-					placeholder_label.text = "✗"
-				placeholder_label.add_theme_color_override("font_color", ThemeManager.get_color("error"))
-				placeholder_label.add_theme_font_size_override("font_size", 56)  # 更大的占位符字体
+				placeholder_label.text = I18nManager.translate("ui.chain_slot.invalid") if I18nManager else "✗"
+				UIFonts.apply_to_label(placeholder_label, "display", UITokens.COLOR.DANGER)
 
 ## 检查是否可以接受卡片
 func can_accept_card(card: CauseCard) -> bool:

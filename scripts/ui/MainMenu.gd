@@ -9,28 +9,24 @@ extends Control
 @onready var subtitle = $TitleContainer/Subtitle
 
 func _ready():
-	# 初始化并应用主题
-	ThemeManager.initialize()
-	ThemeManager.apply_theme_to_scene(self)
-	
 	# 设置背景色
 	var background = get_node_or_null("Background")
 	if background and background is ColorRect:
-		background.color = ThemeManager.get_color("background")
+		background.color = UITokens.COLOR.BG_SURFACE
 	
-	# 为按钮设置主题类型
-	if start_button:
-		start_button.theme_type_variation = "ButtonPrimary"
-	if continue_btn:
-		continue_btn.theme_type_variation = "ButtonSecondary"
-	if archive_button:
-		archive_button.theme_type_variation = "ButtonSecondary"
-	
-	# 为标题设置主题类型
+	# 应用标题样式 - 使用 UIFonts
 	if game_title:
-		game_title.theme_type_variation = "LabelH1"
+		UIFonts.apply_to_label(game_title, "display", UITokens.COLOR.TEXT_PRIMARY)
 	if subtitle:
-		subtitle.theme_type_variation = "LabelH2"
+		UIFonts.apply_to_label(subtitle, "h2", UITokens.COLOR.TEXT_SECONDARY)
+	
+	# 应用按钮样式 - 使用 UIStyles
+	if start_button:
+		UIStyles.apply_button_style(start_button, "primary")
+	if continue_btn:
+		UIStyles.apply_button_style(continue_btn, "secondary")
+	if archive_button:
+		UIStyles.apply_button_style(archive_button, "secondary")
 	
 	# 检查是否有存档
 	if not SaveGame.has_save():

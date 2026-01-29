@@ -22,6 +22,9 @@ window/size/viewport_height=720
 
 [autoload]
 
+UITokens="*res://scripts/ui/UITokens.gd"
+UIFonts="*res://scripts/ui/UIFonts.gd"
+UIStyles="*res://scripts/ui/UIStyles.gd"
 SaveGame="*res://scripts/core/SaveGame.gd"
 GameManager="*res://scripts/core/GameManager.gd"
 AudioManager="*res://scripts/core/AudioManager.gd"

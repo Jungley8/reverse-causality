@@ -49,18 +49,18 @@ func _setup_fonts(theme: Theme):
 	theme.set_font_size("font_size", "", 16)  # TypographySystem.FONT_SIZE_BODY
 
 func _setup_buttons(theme: Theme):
-	# Primary Button - 琥珀金强调（暖色主题）
-	var btn_primary_normal = _create_button_style(Color("#D4A84B"), Color("#B8923E"), 12, 2)
+	# Primary Button - 暖绿强调（成功色、验证按钮）
+	var btn_primary_normal = _create_button_style(Color("#4A9C5C"), Color("#2D7A42"), 12, 2)
 	btn_primary_normal.shadow_color = Color(0, 0, 0, 0.25)
 	btn_primary_normal.shadow_size = 4
 	btn_primary_normal.shadow_offset = Vector2(0, 2)
 	
-	var btn_primary_hover = _create_button_style(Color("#E6B84F"), Color("#D4A84B"), 12, 2, _shadow_md())
-	btn_primary_hover.shadow_color = Color(212, 168, 75, 0.35)
+	var btn_primary_hover = _create_button_style(Color("#5CB871"), Color("#4A9C5C"), 12, 2, _shadow_md())
+	btn_primary_hover.shadow_color = Color(74, 156, 92, 0.35)
 	btn_primary_hover.shadow_size = 8
 	btn_primary_hover.shadow_offset = Vector2(0, 3)
 	
-	var btn_primary_pressed = _create_button_style(Color("#B8923E"), Color("#9E7A30"), 12, 2)
+	var btn_primary_pressed = _create_button_style(Color("#2D7A42"), Color("#1A5A2D"), 12, 2)
 	btn_primary_pressed.shadow_color = Color(0, 0, 0, 0.2)
 	btn_primary_pressed.shadow_size = 2
 	btn_primary_pressed.shadow_offset = Vector2(0, 1)
@@ -72,9 +72,9 @@ func _setup_buttons(theme: Theme):
 	theme.set_stylebox("pressed", "ButtonPrimary", btn_primary_pressed)
 	theme.set_stylebox("disabled", "ButtonPrimary", btn_primary_disabled)
 	
-	theme.set_color("font_color", "ButtonPrimary", Color("#181410"))
-	theme.set_color("font_hover_color", "ButtonPrimary", Color("#181410"))
-	theme.set_color("font_pressed_color", "ButtonPrimary", Color("#181410"))
+	theme.set_color("font_color", "ButtonPrimary", Color("#FAF6F0"))
+	theme.set_color("font_hover_color", "ButtonPrimary", Color("#FFFFFF"))
+	theme.set_color("font_pressed_color", "ButtonPrimary", Color("#FAF6F0"))
 	theme.set_color("font_disabled_color", "ButtonPrimary", Color("#665a4a"))
 	theme.set_font_size("font_size", "ButtonPrimary", 20)
 	
@@ -107,16 +107,25 @@ func _setup_buttons(theme: Theme):
 	theme.set_font_size("font_size", "Button", 18)
 
 func _setup_labels(theme: Theme):
-	theme.set_color("font_color", "Label", Color("#f0ebe3"))
-	theme.set_font_size("font_size", "Label", 17)
-	theme.set_color("font_color", "LabelH1", Color("#f0ebe3"))
-	theme.set_font_size("font_size", "LabelH1", 34)
-	theme.set_color("font_color", "LabelH2", Color("#f0ebe3"))
-	theme.set_font_size("font_size", "LabelH2", 26)
-	theme.set_color("font_color", "LabelSecondary", Color("#9c958a"))
-	theme.set_font_size("font_size", "LabelSecondary", 15)
-	theme.set_color("font_color", "LabelCaption", Color("#9c958a"))
-	theme.set_font_size("font_size", "LabelCaption", 13)
+	# Label - 正文
+	theme.set_color("font_color", "Label", Color("#FAF6F0"))
+	theme.set_font_size("font_size", "Label", 18)
+	
+	# LabelH1 - 一级标题
+	theme.set_color("font_color", "LabelH1", Color("#FAF6F0"))
+	theme.set_font_size("font_size", "LabelH1", 36)
+	
+	# LabelH2 - 二级标题
+	theme.set_color("font_color", "LabelH2", Color("#FAF6F0"))
+	theme.set_font_size("font_size", "LabelH2", 28)
+	
+	# LabelSecondary - 次要文本
+	theme.set_color("font_color", "LabelSecondary", Color("#B8B0A4"))
+	theme.set_font_size("font_size", "LabelSecondary", 16)
+	
+	# LabelCaption - 说明文字
+	theme.set_color("font_color", "LabelCaption", Color("#8B8378"))
+	theme.set_font_size("font_size", "LabelCaption", 14)
 
 func _setup_panels(theme: Theme):
 	# PanelContainer

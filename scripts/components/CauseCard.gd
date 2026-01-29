@@ -24,15 +24,14 @@ func _setup_visuals():
 	if not cause_data:
 		return
 	
-	# 使用主题样式
-	var style = ThemeManager.create_card_style(cause_data.is_distractor)
-	add_theme_stylebox_override("panel", style)
+	# 使用新 UI 系统
+	var variant = "distractor" if cause_data.is_distractor else "default"
+	add_theme_stylebox_override("panel", UIStyles.card(variant))
 	
-	# 设置文本（更大的字体以匹配新的卡片尺寸）
+	# 设置文本 - 使用 UIFonts
 	if label:
 		label.text = cause_data.label
-		label.add_theme_color_override("font_color", ThemeManager.get_color("text_primary"))
-		label.add_theme_font_size_override("font_size", 22)
+		UIFonts.apply_to_label(label, "body_lg")  # 22px 大字体
 
 func _on_mouse_entered():
 	if not is_used and not is_dragging:
@@ -43,42 +42,23 @@ func _on_mouse_exited():
 		_remove_hover_effect()
 
 func _apply_hover_effect():
-	# 更明显的缩放动画
+	# 动画
 	var tween = create_tween()
-	tween.set_parallel(true)
-	tween.tween_property(self, "scale", Vector2(1.08, 1.08), 0.2).set_ease(Tween.EASE_OUT)
+	tween.tween_property(self, "scale", Vector2(1.08, 1.08), UITokens.ANIMATION.DURATION_NORMAL).set_ease(Tween.EASE_OUT)
 	
-	# 更新样式
+	# 更新样式 - 使用 UIStyles
 	if cause_data:
-		var hover_style = ThemeManager.create_card_style(cause_data.is_distractor)
-		hover_style.bg_color = Color("#242019")
-		if cause_data.is_distractor:
-			hover_style.border_color = Color("#c94a4a")
-		else:
-			hover_style.border_color = Color("#d4a84b")
-		hover_style.border_width_left = 3
-		hover_style.border_width_top = 3
-		hover_style.border_width_right = 3
-		hover_style.border_width_bottom = 3
-		if not cause_data.is_distractor:
-			hover_style.shadow_color = Color(212, 168, 75, 0.35)
-		else:
-			hover_style.shadow_color = Color(201, 74, 74, 0.35)
-		hover_style.shadow_size = 10
-		hover_style.shadow_offset = Vector2(0, 3)
-		add_theme_stylebox_override("panel", hover_style)
-
-func _shadow_md() -> Dictionary:
-	return {"shadow_color": Color(0, 0, 0, 0.25), "shadow_size": 4, "shadow_offset": Vector2(0, 2)}
+		var variant = "hover_distractor" if cause_data.is_distractor else "hover"
+		add_theme_stylebox_override("panel", UIStyles.card(variant))
 
 func _remove_hover_effect():
 	var tween = create_tween()
-	tween.tween_property(self, "scale", Vector2.ONE, 0.15).set_ease(Tween.EASE_OUT)
+	tween.tween_property(self, "scale", Vector2.ONE, UITokens.ANIMATION.DURATION_FAST).set_ease(Tween.EASE_OUT)
 	
 	# 恢复原样式
 	if cause_data:
-		var normal_style = ThemeManager.create_card_style(cause_data.is_distractor)
-		add_theme_stylebox_override("panel", normal_style)
+		var variant = "distractor" if cause_data.is_distractor else "default"
+		add_theme_stylebox_override("panel", UIStyles.card(variant))
 
 ## 开始拖拽
 func _get_drag_data(_at_position: Vector2):

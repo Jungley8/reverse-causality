@@ -55,24 +55,24 @@ static func get_color(color_name: String) -> Color:
 	# 直接使用后备颜色值（避免 ColorPalette 类加载问题）
 	return _get_color_direct(color_name)
 
-# 直接颜色值（暖色深色主题，参考经典卡牌/策略游戏）
+# 直接颜色值（暖色学术主题：琥珀金 + 暖绿 + 砖红）
 static func _get_color_direct(color_name: String) -> Color:
 	match color_name:
-		"background": return Color("#0f0e0c")      # 暖黑底
-		"surface": return Color("#1a1814")           # 面板底
-		"surface_raised": return Color("#242019")   # 抬升区域（因果链区）
-		"text_primary": return Color("#faf6f0")     # 高对比主字，便于中文阅读
-		"primary_text": return Color("#faf6f0")
-		"secondary_text": return Color("#b8b0a4")    # 次要字略提亮
-		"accent": return Color("#d4a84b")           # 琥珀金强调
-		"accent_dim": return Color("#b8923e")
-		"causal_strong": return Color("#4a9c5c")   # 暖绿
-		"causal_weak": return Color("#c9a227")
-		"error": return Color("#c94a4a")
-		"success": return Color("#4a9c5c")
-		"warning": return Color("#c9a227")
-		"danger": return Color("#c94a4a")
-		"info": return Color("#7eb8e8")             # 柔和蓝
+		"background": return Color("#0E1117")      # 主表面
+		"surface": return Color("#0E1117")         # 表面底
+		"surface_raised": return Color("#161A23") # 抬升区域
+		"text_primary": return Color("#FAF6F0")    # 主文本（高对比米白）
+		"primary_text": return Color("#FAF6F0")
+		"secondary_text": return Color("#B8B0A4")  # 次要文本（暖灰）
+		"accent": return Color("#D4A84B")          # 琥珀金强调
+		"accent_dim": return Color("#B8923E")
+		"causal_strong": return Color("#4A9C5C")  # 暖绿（成功）
+		"causal_weak": return Color("#D4A84B")    # 琥珀金（警告）
+		"error": return Color("#C94A4A")           # 砖红（失败）
+		"success": return Color("#4A9C5C")
+		"warning": return Color("#D4A84B")
+		"danger": return Color("#C94A4A")
+		"info": return Color("#7EB8E8")            # 柔和蓝
 		_:
 			push_warning("未知颜色名称：", color_name)
 			return Color.WHITE
