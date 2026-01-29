@@ -31,6 +31,15 @@ jobs:
       - name: Verify Godot installation
         run: godot --version
       
+      - name: Install export templates
+        run: |
+          mkdir -p ~/.local/share/godot/export_templates/4.6.stable
+          cd ~/.local/share/godot/export_templates/4.6.stable
+          wget https://github.com/godotengine/godot/releases/download/4.6-stable/Godot_v4.6-stable_export_templates.tpz
+          unzip -o Godot_v4.6-stable_export_templates.tpz
+          mv templates/* .
+          rmdir templates
+      
       - name: Import assets
         run: |
           mkdir -p .godot/imported
